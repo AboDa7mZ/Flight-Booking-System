@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book your flights with ease. Compare prices, find the best deals, and travel the world with Flight Booking System.">
+    <title>Flight Booking System - Book Your Next Adventure</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-plane-departure"></i>
+                <span>SkyVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#destinations">Destinations</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn-text">Sign In</a>
+                <a href="register.html" class="btn btn-primary">Get Started</a>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Discover Your Next
+                    <span class="gradient-text">Adventure</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Experience seamless flight booking with the world's most trusted travel platform. 
+                    Compare prices, choose your perfect flight, and embark on unforgettable journeys.
+                </p>
+            </div>
+
+            <!-- Flight Search Card -->
+            <div class="search-card">
+                <div class="search-tabs">
+                    <button class="tab-btn active" data-tab="one-way">
+                        <i class="fas fa-plane"></i> One Way
+                    </button>
+                    <button class="tab-btn" data-tab="round-trip">
+                        <i class="fas fa-plane"></i><i class="fas fa-plane fa-flip-horizontal"></i> Round Trip
+                    </button>
+                    <button class="tab-btn" data-tab="multi-city">
+                        <i class="fas fa-route"></i> Multi-City
+                    </button>
+                </div>
+
+                <form id="flightSearchForm" class="search-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="from">
+                                <i class="fas fa-plane-departure"></i>
+                                From
+                            </label>
+                            <select id="from" name="from" required>
+                                <option value="">Select Airport</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to">
+                                <i class="fas fa-plane-arrival"></i>
+                                To
+                            </label>
+                            <select id="to" name="to" required>
+                                <option value="">Select Airport</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="departure">
+                                <i class="fas fa-calendar-alt"></i>
+                                Departure
+                            </label>
+                            <input type="date" id="departure" name="departure" required>
+                        </div>
+
+                        <div class="form-group return-date" style="display: none;">
+                            <label for="return">
+                                <i class="fas fa-calendar-alt"></i>
+                                Return
+                            </label>
+                            <input type="date" id="return" name="return">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="passengers">
+                                <i class="fas fa-users"></i>
+                                Passengers
+                            </label>
+                            <select id="passengers" name="passengers">
+                                <option value="1">1 Passenger</option>
+                                <option value="2">2 Passengers</option>
+                                <option value="3">3 Passengers</option>
+                                <option value="4">4 Passengers</option>
+                                <option value="5">5 Passengers</option>
+                                <option value="6">6+ Passengers</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="class">
+                                <i class="fas fa-chair"></i>
+                                Class
+                            </label>
+                            <select id="class" name="class">
+                                <option value="economy">Economy</option>
+                                <option value="business">Business</option>
+                                <option value="first_class">First Class</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-search">
+                        <i class="fas fa-search"></i>
+                        Search Flights
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose SkyVoyage</h2>
+                <p class="section-subtitle">Experience the difference with our premium services</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>Best Prices Guaranteed</h3>
+                    <p>Compare prices from hundreds of airlines and get the best deals on your flights.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Booking</h3>
+                    <p>Your data is protected with industry-leading security and encryption technology.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Our dedicated support team is available around the clock to assist you.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Easy Management</h3>
+                    <p>Manage your bookings, check flight status, and get updates instantly.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Global Coverage</h3>
+                    <p>Access flights to over 5,000 destinations worldwide from 900+ airlines.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>Instant Confirmation</h3>
+                    <p>Get your e-ticket immediately after booking with no waiting time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Destinations -->
+    <section id="destinations" class="destinations-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Popular Destinations</h2>
+                <p class="section-subtitle">Explore the world's most sought-after travel destinations</p>
+            </div>
+
+            <div class="destinations-grid">
+                <div class="destination-card">
+                    <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800');">
+                        <div class="destination-overlay">
+                            <h3>Paris, France</h3>
+                            <p>From $450</p>
+                            <a href="#" class="btn btn-secondary">Explore</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1524850011238-e3d235c7d4c9?w=800');">
+                        <div class="destination-overlay">
+                            <h3>Dubai, UAE</h3>
+                            <p>From $650</p>
+                            <a href="#" class="btn btn-secondary">Explore</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800');">
+                        <div class="destination-overlay">
+                            <h3>New York, USA</h3>
+                            <p>From $550</p>
+                            <a href="#" class="btn btn-secondary">Explore</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800');">
+                        <div class="destination-overlay">
+                            <h3>Tokyo, Japan</h3>
+                            <p>From $720</p>
+                            <a href="#" class="btn btn-secondary">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="5000">0</div>
+                    <div class="stat-label">Destinations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="900">0</div>
+                    <div class="stat-label">Airlines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="2000000">0</div>
+                    <div class="stat-label">Happy Travelers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="50000">0</div>
+                    <div class="stat-label">Daily Bookings</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your Journey?</h2>
+                <p>Join millions of travelers who trust SkyVoyage for their flight bookings</p>
+                <a href="register.html" class="btn btn-cta">Get Started Today</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-plane-departure"></i>
+                        <span>SkyVoyage</span>
+                    </div>
+                    <p>Your trusted partner for seamless flight bookings and unforgettable travel experiences.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Airlines</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to get special offers and travel updates</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 SkyVoyage. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

@@ -300,9 +300,18 @@
         let filteredFlights = [];
         
         async function loadFlights() {
-            const searchData = JSON.parse(sessionStorage.getItem('searchData'));
+            // Get search parameters from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const from = urlParams.get('from');
+            const to = urlParams.get('to');
+            const date = urlParams.get('date');
+            const passengers = urlParams.get('passengers') || '1';
+            const travelClass = urlParams.get('class') || 'economy';
             
-            if (!searchData) {
+            console.log('Search params:', { from, to, date, passengers, travelClass });
+            
+            if (!from || !to || !date) {
+                console.error('Missing search parameters');
                 window.location.href = 'index.html';
                 return;
             }
@@ -310,19 +319,26 @@
             // Update search summary
             document.getElementById('routeInfo').textContent = 'Search Results';
             document.getElementById('searchDetails').textContent = 
-                `${searchData.departure} • ${searchData.passengers} passenger(s) • ${searchData.class}`;
+                `${date} • ${passengers} passenger(s) • ${travelClass}`;
             
             try {
-                const flights = await searchFlights(searchData);
-                allFlights = flights;
-                filteredFlights = flights;
+                // Fetch flights from API
+                const apiUrl = `http://localhost/Flight-Booking-Website/backend/api/flights.php?action=search&from=${from}&to=${to}&date=${date}&passengers=${passengers}&class=${travelClass}`;
+                console.log('API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                console.log('API Response:', data);
                 
                 document.getElementById('loading').style.display = 'none';
                 
-                if (flights.length === 0) {
-                    document.getElementById('noResults').style.display = 'block';
+                if (data.flights && data.flights.length > 0) {
+                    allFlights = data.flights;
+                    filteredFlights = data.flights;
+                    populateAirlineFilters(data.flights);
+                    displayFlights(data.flights);
                 } else {
-                    displayFlights(flights);
+                    document.getElementById('noResults').style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error loading flights:', error);
@@ -342,14 +358,53 @@
             });
         }
         
+        function populateAirlineFilters(flights) {
+            const airlineFiltersDiv = document.getElementById('airlineFilters');
+            const airlines = [...new Set(flights.map(f => f.airline_name))];
+            
+            airlineFiltersDiv.innerHTML = airlines.map(airline => `
+                <label style="display: block; margin-bottom: 8px;">
+                    <input type="checkbox" value="${airline}" checked> ${airline}
+                </label>
+            `).join('');
+        }
+        
         function createFlightCard(flight) {
             const card = document.createElement('div');
             card.className = 'flight-card';
             
-            const departureTime = formatTime(flight.departure_time);
-            const arrivalTime = formatTime(flight.arrival_time);
-            const duration = calculateDuration(flight.departure_time, flight.arrival_time);
-            const price = formatCurrency(flight.base_price);
+            // Helper functions with fallbacks
+            const formatTimeLocal = (dateStr) => {
+                try {
+                    return new Date(dateStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                } catch(e) { return dateStr; }
+            };
+            
+            const formatCurrencyLocal = (amount) => {
+                try {
+                    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+                } catch(e) { return '$' + amount; }
+            };
+            
+            const formatDateLocal = (dateStr) => {
+                try {
+                    return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+                } catch(e) { return dateStr; }
+            };
+            
+            const calculateDurationLocal = (dep, arr) => {
+                try {
+                    const diff = new Date(arr) - new Date(dep);
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    return `${hours}h ${minutes}m`;
+                } catch(e) { return 'N/A'; }
+            };
+            
+            const departureTime = formatTimeLocal(flight.departure_time);
+            const arrivalTime = formatTimeLocal(flight.arrival_time);
+            const duration = calculateDurationLocal(flight.departure_time, flight.arrival_time);
+            const price = formatCurrencyLocal(flight.price);
             
             card.innerHTML = `
                 <div class="flight-header">
@@ -370,8 +425,8 @@
                 <div class="flight-details">
                     <div class="flight-time">
                         <span class="time">${departureTime}</span>
-                        <span class="airport">${flight.origin_city} (${flight.origin_code})</span>
-                        <span class="date">${formatDate(flight.departure_time)}</span>
+                        <span class="airport">${flight.departure_city} (${flight.departure_code})</span>
+                        <span class="date">${formatDateLocal(flight.departure_time)}</span>
                     </div>
                     
                     <div class="flight-duration">
@@ -382,8 +437,8 @@
                     
                     <div class="flight-time" style="text-align: right;">
                         <span class="time">${arrivalTime}</span>
-                        <span class="airport">${flight.destination_city} (${flight.destination_code})</span>
-                        <span class="date">${formatDate(flight.arrival_time)}</span>
+                        <span class="airport">${flight.arrival_city} (${flight.arrival_code})</span>
+                        <span class="date">${formatDateLocal(flight.arrival_time)}</span>
                     </div>
                 </div>
                 
@@ -410,14 +465,77 @@
         }
         
         function applyFilters() {
+            console.log('Applying filters...');
+            
             // Price filter
             const maxPrice = parseInt(document.getElementById('priceRange').value);
+            console.log('Max price:', maxPrice);
             
-            filteredFlights = allFlights.filter(flight => 
-                parseFloat(flight.base_price) <= maxPrice
-            );
+            // Get selected departure times
+            const departureTimeCheckboxes = document.querySelectorAll('.filter-group input[type="checkbox"][value]');
+            const selectedTimes = [];
+            departureTimeCheckboxes.forEach(cb => {
+                if (cb.value && (cb.value === 'morning' || cb.value === 'afternoon' || cb.value === 'evening' || cb.value === 'night') && cb.checked) {
+                    selectedTimes.push(cb.value);
+                }
+            });
             
-            displayFlights(filteredFlights);
+            // Get selected airlines
+            const airlineCheckboxes = document.querySelectorAll('#airlineFilters input[type="checkbox"]');
+            const selectedAirlines = [];
+            airlineCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    selectedAirlines.push(cb.value);
+                }
+            });
+            
+            console.log('Selected times:', selectedTimes);
+            console.log('Selected airlines:', selectedAirlines);
+            console.log('All flights:', allFlights);
+            
+            filteredFlights = allFlights.filter(flight => {
+                // Price filter
+                const flightPrice = parseFloat(flight.price);
+                if (flightPrice > maxPrice) {
+                    console.log(`Flight ${flight.flight_number} filtered out by price: ${flightPrice} > ${maxPrice}`);
+                    return false;
+                }
+                
+                // Airline filter
+                if (selectedAirlines.length > 0 && !selectedAirlines.includes(flight.airline_name)) {
+                    console.log(`Flight ${flight.flight_number} filtered out by airline`);
+                    return false;
+                }
+                
+                // Departure time filter (only apply if checkboxes are selected)
+                if (selectedTimes.length > 0) {
+                    const depTime = new Date(flight.departure_time);
+                    const hour = depTime.getHours();
+                    
+                    let matchesTime = false;
+                    if (selectedTimes.includes('morning') && hour >= 6 && hour < 12) matchesTime = true;
+                    if (selectedTimes.includes('afternoon') && hour >= 12 && hour < 18) matchesTime = true;
+                    if (selectedTimes.includes('evening') && hour >= 18 && hour < 24) matchesTime = true;
+                    if (selectedTimes.includes('night') && hour >= 0 && hour < 6) matchesTime = true;
+                    
+                    if (!matchesTime) {
+                        console.log(`Flight ${flight.flight_number} filtered out by time`);
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            console.log('Filtered flights:', filteredFlights);
+            
+            if (filteredFlights.length === 0) {
+                document.getElementById('flightList').style.display = 'none';
+                document.getElementById('noResults').style.display = 'block';
+            } else {
+                document.getElementById('noResults').style.display = 'none';
+                displayFlights(filteredFlights);
+            }
         }
         
         // Price range slider
@@ -431,8 +549,12 @@
         }
         
         // Load flights on page load
-        loadFlights();
-        checkAuth();
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFlights();
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+        });
     </script>
 </body>
 </html>

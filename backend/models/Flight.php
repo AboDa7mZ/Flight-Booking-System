@@ -39,6 +39,18 @@ class Flight {
      * Search flights
      */
     public function searchFlights($departure_airport_id, $arrival_airport_id, $departure_date, $seat_class = 'economy', $passengers = 1) {
+        // Determine which price and seats columns to use
+        $price_column = 'f.base_price_economy';
+        $seats_column = 'f.available_seats_economy';
+        
+        if ($seat_class == 'business') {
+            $price_column = 'f.base_price_business';
+            $seats_column = 'f.available_seats_business';
+        } elseif ($seat_class == 'first_class') {
+            $price_column = 'f.base_price_first_class';
+            $seats_column = 'f.available_seats_first_class';
+        }
+        
         $query = "SELECT 
                     f.flight_id,
                     f.flight_number,
@@ -60,16 +72,8 @@ class Flight {
                     arr.city as arrival_city,
                     arr.country as arrival_country,
                     ac.aircraft_model,
-                    CASE 
-                        WHEN :seat_class = 'economy' THEN f.base_price_economy
-                        WHEN :seat_class = 'business' THEN f.base_price_business
-                        WHEN :seat_class = 'first_class' THEN f.base_price_first_class
-                    END as price,
-                    CASE 
-                        WHEN :seat_class2 = 'economy' THEN f.available_seats_economy
-                        WHEN :seat_class2 = 'business' THEN f.available_seats_business
-                        WHEN :seat_class2 = 'first_class' THEN f.available_seats_first_class
-                    END as available_seats
+                    $price_column as price,
+                    $seats_column as available_seats
                 FROM " . $this->table_name . " f
                 INNER JOIN airlines al ON f.airline_id = al.airline_id
                 INNER JOIN airports dep ON f.departure_airport_id = dep.airport_id
@@ -79,15 +83,13 @@ class Flight {
                 AND f.arrival_airport_id = :arrival_airport_id
                 AND DATE(f.departure_time) = :departure_date
                 AND f.flight_status = 'scheduled'
-                HAVING available_seats >= :passengers
+                AND $seats_column >= :passengers
                 ORDER BY f.departure_time";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":departure_airport_id", $departure_airport_id);
         $stmt->bindParam(":arrival_airport_id", $arrival_airport_id);
         $stmt->bindParam(":departure_date", $departure_date);
-        $stmt->bindParam(":seat_class", $seat_class);
-        $stmt->bindParam(":seat_class2", $seat_class);
         $stmt->bindParam(":passengers", $passengers, PDO::PARAM_INT);
         $stmt->execute();
         

@@ -255,20 +255,40 @@
             try {
                 errorMessage.classList.remove('show');
                 
-                const response = await AuthAPI.login(email, password);
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
                 
-                if (response.success) {
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.success) {
                     // Save auth data
-                    saveAuthData(response.data.token, response.data.user);
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userId', data.user.user_id);
+                    localStorage.setItem('userType', data.user.user_type);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('accountBalance', data.user.account_balance);
                     
-                    // Redirect to dashboard or home
-                    window.location.href = response.data.user.role === 'admin' 
-                        ? 'admin-dashboard.html' 
-                        : 'dashboard.html';
+                    // Redirect based on user type
+                    if (data.user.user_type === 'company') {
+                        window.location.href = 'company-home.html';
+                    } else {
+                        window.location.href = 'passenger-home.html';
+                    }
                 } else {
-                    errorMessage.textContent = response.message || 'Login failed';
+                    errorMessage.textContent = data.message || 'Login failed';
                     errorMessage.classList.add('show');
                 }
+                
             } catch (error) {
                 errorMessage.textContent = error.message || 'An error occurred. Please try again.';
                 errorMessage.classList.add('show');

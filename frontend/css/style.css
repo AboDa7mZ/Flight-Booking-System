@@ -198,6 +198,12 @@ a {
     gap: var(--spacing-md);
 }
 
+.user-welcome {
+    color: var(--color-gray-700);
+    font-weight: 500;
+    font-size: var(--text-sm);
+}
+
 .mobile-menu-toggle {
     display: none;
     flex-direction: column;

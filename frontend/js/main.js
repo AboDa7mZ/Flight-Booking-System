@@ -230,18 +230,70 @@ function checkAuth() {
             logout();
         });
     }
+    // If elements don't exist, just continue - no error
 }
 
 // Logout Function
 function logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
     window.location.href = 'index.html';
+}
+
+// Load Airports
+async function loadAirports() {
+    console.log('loadAirports function called');
+    try {
+        const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/airports.php');
+        const data = await response.json();
+        console.log('Airports data received:', data);
+        
+        const fromSelect = document.getElementById('from');
+        const toSelect = document.getElementById('to');
+        
+        console.log('From select element:', fromSelect);
+        console.log('To select element:', toSelect);
+        
+        if (fromSelect && toSelect && data.airports && Array.isArray(data.airports)) {
+            console.log('Adding', data.airports.length, 'airports to dropdowns');
+            data.airports.forEach(airport => {
+                const option1 = document.createElement('option');
+                option1.value = airport.airport_id;
+                option1.textContent = `${airport.city} (${airport.airport_code}) - ${airport.airport_name}`;
+                fromSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = airport.airport_id;
+                option2.textContent = `${airport.city} (${airport.airport_code}) - ${airport.airport_name}`;
+                toSelect.appendChild(option2);
+            });
+            console.log('Airports loaded successfully');
+        } else {
+            console.error('Required elements or data not found', {
+                fromSelect: !!fromSelect,
+                toSelect: !!toSelect,
+                hasAirports: !!(data.airports),
+                isArray: Array.isArray(data.airports)
+            });
+        }
+    } catch (error) {
+        console.error('Error loading airports:', error);
+    }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded');
     checkAuth();
+    
+    // Give a small delay to ensure all elements are rendered
+    setTimeout(() => {
+        loadAirports();
+    }, 100);
     
     // Add animation delays to feature cards
     document.querySelectorAll('.feature-card').forEach((card, index) => {

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .dashboard {
+            padding-top: 80px;
+            min-height: 100vh;
+            background: var(--color-gray-50);
+        }
+        .header-section {
+            background: var(--color-white);
+            padding: var(--spacing-2xl) 0;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        .company-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-3xl);
+            color: var(--color-white);
+            font-weight: 700;
+        }
+        .company-info h1 {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-sm);
+        }
+        .balance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--secondary-color);
+            color: var(--color-white);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+        .quick-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+        }
+        .main-content {
+            padding: var(--spacing-xl) 0;
+        }
+        .flights-table {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+        .flights-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .flights-table th {
+            text-align: left;
+            padding: var(--spacing-md);
+            border-bottom: 2px solid var(--color-gray-200);
+            font-weight: 600;
+            color: var(--color-gray-700);
+        }
+        .flights-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-gray-100);
+        }
+        .flights-table tr:hover {
+            background: var(--color-gray-50);
+            cursor: pointer;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+        .status-active {
+            background: #e7f5e9;
+            color: var(--secondary-color);
+        }
+        .status-completed {
+            background: var(--color-gray-200);
+            color: var(--color-gray-700);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+        .stat-card {
+            background: var(--color-white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            color: var(--color-gray-600);
+            margin-top: var(--spacing-sm);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="company-home.html" class="logo">
+                <i class="fas fa-plane-departure"></i>
+                <span>SkyVoyage</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="company-home.html" class="active">Dashboard</a></li>
+                <li><a href="add-flight.html">Add Flight</a></li>
+                <li><a href="company-profile.html">Profile</a></li>
+                <li><a href="company-messages.html">Messages</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-text" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard">
+        <div class="header-section">
+            <div class="container">
+                <div class="company-header">
+                    <div class="company-logo" id="companyLogo">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="company-info">
+                        <h1 id="companyName">Company Name</h1>
+                        <span class="balance-badge">
+                            <i class="fas fa-wallet"></i>
+                            Balance: $<span id="accountBalance">0.00</span>
+                        </span>
+                        <div class="quick-actions">
+                            <a href="add-flight.html" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add New Flight
+                            </a>
+                            <a href="company-profile.html" class="btn btn-secondary">
+                                <i class="fas fa-user-edit"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="container">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalFlights">0</div>
+                        <div class="stat-label">Total Flights</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeFlights">0</div>
+                        <div class="stat-label">Active Flights</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalPassengers">0</div>
+                        <div class="stat-label">Total Passengers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="unreadMessages">0</div>
+                        <div class="stat-label">Unread Messages</div>
+                    </div>
+                </div>
+                
+                <div class="flights-table">
+                    <h2>My Flights</h2>
+                    <table id="flightsTable">
+                        <thead>
+                            <tr>
+                                <th>Flight Code</th>
+                                <th>Name</th>
+                                <th>Route</th>
+                                <th>Passengers</th>
+                                <th>Fees</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="flightsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: var(--spacing-2xl);">
+                                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    <p>Loading flights...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check authentication
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+        const userName = localStorage.getItem('userName');
+        const accountBalance = localStorage.getItem('accountBalance');
+        
+        if (!userId || userType !== 'company') {
+            alert('Please login as a company');
+            window.location.href = 'login.html';
+        }
+        
+        // Display company info
+        document.getElementById('companyName').textContent = userName;
+        document.getElementById('accountBalance').textContent = parseFloat(accountBalance).toFixed(2);
+        
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
+        // Load company flights
+        async function loadFlights() {
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/company-flights.php?company_id=${userId}`);
+                const data = await response.json();
+                
+                console.log('Flights data:', data);
+                
+                if (data.success && data.flights) {
+                    displayFlights(data.flights);
+                    updateStats(data.flights);
+                } else {
+                    document.getElementById('flightsTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: var(--spacing-2xl);">
+                                <p>No flights found. <a href="add-flight.html">Add your first flight</a></p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading flights:', error);
+                document.getElementById('flightsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--danger-color);">
+                            Error loading flights. Please refresh the page.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function displayFlights(flights) {
+            const tbody = document.getElementById('flightsTableBody');
+            tbody.innerHTML = '';
+            
+            flights.forEach(flight => {
+                const row = document.createElement('tr');
+                row.onclick = () => window.location.href = `flight-details.html?id=${flight.flight_id}`;
+                
+                const statusClass = flight.is_completed ? 'status-completed' : 'status-active';
+                const statusText = flight.is_completed ? 'Completed' : 'Active';
+                
+                row.innerHTML = `
+                    <td><strong>${flight.flight_code}</strong></td>
+                    <td>${flight.flight_name}</td>
+                    <td>${flight.route}</td>
+                    <td>${flight.registered_passengers}/${flight.max_passengers} 
+                        ${flight.pending_passengers > 0 ? `(+${flight.pending_passengers} pending)` : ''}
+                    </td>
+                    <td>$${parseFloat(flight.fees).toFixed(2)}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td><button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewFlight(${flight.flight_id})">View</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateStats(flights) {
+            const totalFlights = flights.length;
+            const activeFlights = flights.filter(f => !f.is_completed).length;
+            const totalPassengers = flights.reduce((sum, f) => sum + parseInt(f.registered_passengers) + parseInt(f.pending_passengers), 0);
+            
+            document.getElementById('totalFlights').textContent = totalFlights;
+            document.getElementById('activeFlights').textContent = activeFlights;
+            document.getElementById('totalPassengers').textContent = totalPassengers;
+        }
+        
+        function viewFlight(flightId) {
+            window.location.href = `flight-details.html?id=${flightId}`;
+        }
+        
+        // Load data on page load
+        loadFlights();
+    </script>
+</body>
+</html>

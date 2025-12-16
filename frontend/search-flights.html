@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Flights - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .search-page {
+            padding-top: 80px;
+            min-height: 100vh;
+            background: var(--color-gray-50);
+        }
+        .search-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--color-white);
+            padding: var(--spacing-3xl) 0;
+            text-align: center;
+        }
+        .search-hero h1 {
+            font-size: var(--text-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+        .search-box {
+            background: var(--color-white);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            margin-top: calc(-1 * var(--spacing-3xl));
+            margin-bottom: var(--spacing-2xl);
+        }
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: var(--spacing-lg);
+            align-items: end;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-field label {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-gray-700);
+            font-size: var(--text-sm);
+        }
+        .form-field select,
+        .form-field input {
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            transition: var(--transition-base);
+        }
+        .form-field select:focus,
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+        .form-field select {
+            appearance: none;
+            background: var(--color-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+            padding-right: 40px;
+        }
+        .results-section {
+            margin-top: var(--spacing-2xl);
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        .flights-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+        .flight-card {
+            background: var(--color-white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+        .flight-card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+        }
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--spacing-lg);
+        }
+        .company-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--color-gray-100);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            color: var(--color-gray-700);
+        }
+        .price-tag {
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        .route-display {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-lg);
+            background: var(--color-gray-50);
+            border-radius: var(--radius-md);
+        }
+        .city {
+            flex: 1;
+        }
+        .city-name {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-gray-900);
+        }
+        .city-label {
+            font-size: var(--text-sm);
+            color: var(--color-gray-600);
+        }
+        .route-arrow {
+            color: var(--primary-color);
+            font-size: var(--text-2xl);
+        }
+        .flight-details {
+            display: flex;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--color-gray-200);
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-gray-600);
+        }
+        .detail-item i {
+            color: var(--primary-color);
+        }
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-3xl);
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+        }
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--color-gray-300);
+            margin-bottom: var(--spacing-lg);
+        }
+        .loading {
+            text-align: center;
+            padding: var(--spacing-3xl);
+        }
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            .flight-details {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="passenger-home.html" class="logo">
+                <i class="fas fa-plane-departure"></i>
+                <span>SkyVoyage</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="passenger-home.html">Home</a></li>
+                <li><a href="search-flights.html" class="active">Search Flights</a></li>
+                <li><a href="passenger-profile.html">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <span style="margin-right: var(--spacing-md); color: var(--color-gray-700);">
+                    <i class="fas fa-wallet"></i> $<span id="balanceDisplay">0.00</span>
+                </span>
+                <button class="btn btn-text" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="search-page">
+        <div class="search-hero">
+            <h1>Find Your Perfect Flight</h1>
+            <p>Search from hundreds of available flights</p>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <form class="search-form" id="searchForm" onsubmit="searchFlights(event)">
+                    <div class="form-field">
+                        <label for="fromCity">
+                            <i class="fas fa-plane-departure"></i> From
+                        </label>
+                        <select id="fromCity" required>
+                            <option value="">Select departure city</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="toCity">
+                            <i class="fas fa-plane-arrival"></i> To
+                        </label>
+                        <select id="toCity" required>
+                            <option value="">Select destination city</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="padding: var(--spacing-md) var(--spacing-2xl);">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+            
+            <div id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2><span id="resultsCount">0</span> Flights Found</h2>
+                    <div>
+                        <span style="color: var(--color-gray-600);">From</span>
+                        <strong id="searchFrom"></strong>
+                        <i class="fas fa-arrow-right" style="margin: 0 var(--spacing-sm); color: var(--primary-color);"></i>
+                        <strong id="searchTo"></strong>
+                    </div>
+                </div>
+                
+                <div class="flights-grid" id="flightsGrid"></div>
+            </div>
+            
+            <div id="loadingState" class="loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary-color);"></i>
+                <p style="margin-top: var(--spacing-lg); color: var(--color-gray-600);">Searching for flights...</p>
+            </div>
+            
+            <div id="emptyState" class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>Search for Available Flights</h3>
+                <p style="color: var(--color-gray-600); margin-top: var(--spacing-sm);">
+                    Enter your departure and destination cities above to find flights
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+        const accountBalance = localStorage.getItem('accountBalance');
+        
+        if (!userId || userType !== 'passenger') {
+            alert('Please login as a passenger to search flights');
+            window.location.href = 'login.html';
+        }
+        
+        // Available cities
+        const cities = [
+            'New York',
+            'London',
+            'Los Angeles',
+            'Honolulu',
+            'Tokyo',
+            'Miami',
+            'Paris',
+            'Chicago',
+            'Dubai',
+            'Boston',
+            'Berlin',
+            'San Francisco',
+            'Seattle',
+            'Las Vegas',
+            'Orlando',
+            'Rome',
+            'Barcelona',
+            'Amsterdam',
+            'Singapore',
+            'Hong Kong',
+            'Sydney',
+            'Toronto',
+            'Vancouver',
+            'Mexico City',
+            'Bangkok'
+        ];
+        
+        // Load cities into dropdowns and initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing page');
+            
+            // Set balance display
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            if (balanceDisplay) {
+                balanceDisplay.textContent = parseFloat(accountBalance).toFixed(2);
+            }
+            
+            // Load cities
+            const fromSelect = document.getElementById('fromCity');
+            const toSelect = document.getElementById('toCity');
+            
+            if (fromSelect && toSelect) {
+                cities.forEach(city => {
+                    const option1 = new Option(city, city);
+                    const option2 = new Option(city, city);
+                    fromSelect.add(option1);
+                    toSelect.add(option2);
+                });
+                console.log('Cities loaded:', fromSelect.options.length, 'options');
+            } else {
+                console.error('Select elements not found!');
+            }
+        });
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
+        async function searchFlights(event) {
+            event.preventDefault();
+            
+            const from = document.getElementById('fromCity').value;
+            const to = document.getElementById('toCity').value;
+            
+            if (!from || !to) {
+                alert('Please select both departure and destination cities');
+                return;
+            }
+            
+            if (from === to) {
+                alert('Departure and destination cities must be different');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'block';
+            
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/search-flights.php?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+                const data = await response.json();
+                
+                console.log('Search results:', data);
+                
+                document.getElementById('loadingState').style.display = 'none';
+                
+                if (data.success && data.flights && data.flights.length > 0) {
+                    displayResults(data.flights, from, to);
+                } else {
+                    showNoResults(from, to);
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                alert('Error searching flights. Please try again.');
+            }
+        }
+        
+        function displayResults(flights, from, to) {
+            document.getElementById('searchFrom').textContent = from;
+            document.getElementById('searchTo').textContent = to;
+            document.getElementById('resultsCount').textContent = flights.length;
+            
+            const grid = document.getElementById('flightsGrid');
+            grid.innerHTML = '';
+            
+            flights.forEach(flight => {
+                const card = createFlightCard(flight);
+                grid.appendChild(card);
+            });
+            
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+        
+        function createFlightCard(flight) {
+            const card = document.createElement('div');
+            card.className = 'flight-card';
+            card.onclick = () => viewFlightDetails(flight.flight_id);
+            
+            const availableSeats = flight.max_passengers - flight.registered_passengers - flight.pending_passengers;
+            const routeCities = flight.route.split(' → ');
+            const departure = routeCities[0] || 'Departure';
+            const arrival = routeCities[routeCities.length - 1] || 'Arrival';
+            
+            card.innerHTML = `
+                <div class="flight-header">
+                    <div>
+                        <h3 style="font-size: var(--text-xl); margin-bottom: var(--spacing-sm);">${flight.flight_name}</h3>
+                        <span class="company-badge">
+                            <i class="fas fa-building"></i>
+                            ${flight.company_name}
+                        </span>
+                    </div>
+                    <div class="price-tag">
+                        $${parseFloat(flight.fees).toFixed(2)}
+                    </div>
+                </div>
+                
+                <div class="route-display">
+                    <div class="city">
+                        <div class="city-name">${departure}</div>
+                        <div class="city-label">Departure</div>
+                    </div>
+                    <i class="fas fa-arrow-right route-arrow"></i>
+                    <div class="city" style="text-align: right;">
+                        <div class="city-name">${arrival}</div>
+                        <div class="city-label">Arrival</div>
+                    </div>
+                </div>
+                
+                <div class="flight-details">
+                    <div class="detail-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Code: <strong>${flight.flight_code}</strong></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-users"></i>
+                        <span><strong>${availableSeats}</strong> seats available</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${routeCities.length} ${routeCities.length > 2 ? 'cities' : 'direct'}</span>
+                    </div>
+                    ${flight.is_completed ? '<div class="detail-item" style="color: var(--danger-color);"><i class="fas fa-times-circle"></i><span>Completed</span></div>' : ''}
+                </div>
+                
+                <div style="margin-top: var(--spacing-lg);">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); viewFlightDetails(${flight.flight_id})">
+                        View Details & Book <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function showNoResults(from, to) {
+            const grid = document.getElementById('flightsGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-plane-slash"></i>
+                    <h3>No Flights Found</h3>
+                    <p style="color: var(--color-gray-600); margin-top: var(--spacing-sm);">
+                        We couldn't find any flights from <strong>${from}</strong> to <strong>${to}</strong>
+                    </p>
+                    <p style="color: var(--color-gray-600);">Try searching for different cities</p>
+                </div>
+            `;
+            document.getElementById('searchFrom').textContent = from;
+            document.getElementById('searchTo').textContent = to;
+            document.getElementById('resultsCount').textContent = '0';
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+        
+        function viewFlightDetails(flightId) {
+            window.location.href = `flight-info.html?id=${flightId}`;
+        }
+    </script>
+</body>
+</html>

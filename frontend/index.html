@@ -345,5 +345,95 @@
 
     <script src="js/main.js"></script>
     <script src="js/api.js"></script>
+    <script>
+        // Load airports immediately
+        async function loadAirportsNow() {
+            console.log('Loading airports directly...');
+            try {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/airports.php');
+                const data = await response.json();
+                console.log('Airports data:', data);
+                
+                const fromSelect = document.getElementById('from');
+                const toSelect = document.getElementById('to');
+                
+                if (fromSelect && toSelect && data.airports) {
+                    data.airports.forEach(airport => {
+                        const option1 = new Option(
+                            `${airport.city} (${airport.airport_code}) - ${airport.airport_name}`,
+                            airport.airport_id
+                        );
+                        const option2 = new Option(
+                            `${airport.city} (${airport.airport_code}) - ${airport.airport_name}`,
+                            airport.airport_id
+                        );
+                        fromSelect.add(option1);
+                        toSelect.add(option2);
+                    });
+                    console.log('Airports loaded:', data.airports.length);
+                }
+            } catch (error) {
+                console.error('Error loading airports:', error);
+            }
+        }
+        
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load airports
+            loadAirportsNow();
+            
+            const authToken = localStorage.getItem('authToken');
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            
+            if (authToken && userName) {
+                // User is logged in - update navigation
+                const navActions = document.querySelector('.nav-actions');
+                navActions.innerHTML = `
+                    <span class="user-welcome">Welcome, ${userName}</span>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                `;
+            }
+        });
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            alert('Logged out successfully!');
+            window.location.reload();
+        }
+        
+        // Handle flight search
+        document.getElementById('flightSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+            const departure = document.getElementById('departure').value;
+            const passengers = document.getElementById('passengers').value;
+            const travelClass = document.getElementById('class').value;
+            
+            if (!from || !to || !departure) {
+                alert('Please fill in all required fields: From, To, and Departure date');
+                return;
+            }
+            
+            // Store search parameters
+            localStorage.setItem('searchParams', JSON.stringify({
+                from: from,
+                to: to,
+                date: departure,
+                passengers: passengers,
+                class: travelClass
+            }));
+            
+            // Redirect to search results page with correct parameter names
+            window.location.href = `search-results.html?from=${from}&to=${to}&date=${departure}&passengers=${passengers}&class=${travelClass}`;
+        });
+    </script>
 </body>
 </html>

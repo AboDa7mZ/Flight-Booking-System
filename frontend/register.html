@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Register - SkyVoyage Flight Booking</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -212,13 +215,17 @@
             
             <form class="auth-form" id="registerForm">
                 <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name">
+                    <label for="userType">Account Type</label>
+                    <select id="userType" name="userType" required style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--color-gray-300); border-radius: var(--radius-md); font-size: var(--text-base);">
+                        <option value="">Select Account Type</option>
+                        <option value="passenger">Passenger</option>
+                        <option value="company">Company</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Full name or Company name">
                 </div>
                 
                 <div class="form-group">
@@ -227,21 +234,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="+1234567890">
+                    <label for="tel">Phone Number</label>
+                    <input type="tel" id="tel" name="tel" required placeholder="+1234567890">
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required placeholder="Create a strong password">
-                    <div class="password-requirements">
-                        <small>Password must contain:</small>
-                        <ul>
-                            <li>At least 8 characters</li>
-                            <li>One uppercase letter</li>
-                            <li>One number</li>
-                        </ul>
-                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -284,26 +283,30 @@
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const formData = {
-                first_name: document.getElementById('firstName').value,
-                last_name: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                password: document.getElementById('password').value
-            };
-            
+            const userType = document.getElementById('userType').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const tel = document.getElementById('tel').value;
+            const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             // Validation
-            if (formData.password !== confirmPassword) {
+            if (!userType) {
+                errorMessage.textContent = 'Please select an account type';
+                errorMessage.classList.add('show');
+                successMessage.classList.remove('show');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
                 errorMessage.textContent = 'Passwords do not match';
                 errorMessage.classList.add('show');
                 successMessage.classList.remove('show');
                 return;
             }
             
-            if (formData.password.length < 8) {
-                errorMessage.textContent = 'Password must be at least 8 characters';
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters';
                 errorMessage.classList.add('show');
                 successMessage.classList.remove('show');
                 return;
@@ -313,9 +316,24 @@
                 errorMessage.classList.remove('show');
                 successMessage.classList.remove('show');
                 
-                const response = await AuthAPI.register(formData);
+                // Send registration data to API
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/register.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_type: userType,
+                        name: name,
+                        email: email,
+                        tel: tel,
+                        password: password
+                    })
+                });
                 
-                if (response.success) {
+                const data = await response.json();
+                
+                if (data.success) {
                     successMessage.textContent = 'Account created successfully! Redirecting to login...';
                     successMessage.classList.add('show');
                     
@@ -324,11 +342,12 @@
                         window.location.href = 'login.html';
                     }, 2000);
                 } else {
-                    errorMessage.textContent = response.message || 'Registration failed';
+                    errorMessage.textContent = data.message || 'Registration failed';
                     errorMessage.classList.add('show');
                 }
             } catch (error) {
-                errorMessage.textContent = error.message || 'An error occurred. Please try again.';
+                console.error('Registration error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
                 errorMessage.classList.add('show');
             }
         });

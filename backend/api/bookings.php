@@ -86,39 +86,77 @@ if($method == "GET") {
 
 else if($method == "POST") {
     // CREATE BOOKING
-    if(isset($_GET['action']) && $_GET['action'] == 'create') {
-        if(!empty($data->user_id) && !empty($data->flight_id) && 
-           !empty($data->number_of_passengers) && !empty($data->seat_class)) {
+    if(!empty($data->passenger_id) && !empty($data->flight_id) && 
+       !empty($data->payment_type) && !empty($data->amount_paid)) {
+        
+        try {
+            // Start transaction
+            $db->beginTransaction();
             
-            $booking->user_id = $data->user_id;
-            $booking->flight_id = $data->flight_id;
-            $booking->number_of_passengers = $data->number_of_passengers;
-            $booking->seat_class = $data->seat_class;
-            $booking->total_amount = $data->total_amount;
-            $booking->travel_date = $data->travel_date;
-            $booking->special_requests = isset($data->special_requests) ? $data->special_requests : null;
+            // Insert booking
+            $query = "INSERT INTO bookings 
+                      (passenger_id, flight_id, booking_date, amount_paid, payment_type, status) 
+                      VALUES 
+                      (:passenger_id, :flight_id, NOW(), :amount_paid, :payment_type, 'pending')";
             
-            $booking_id = $booking->createBooking();
+            $stmt = $db->prepare($query);
+            $stmt->bindParam(':passenger_id', $data->passenger_id);
+            $stmt->bindParam(':flight_id', $data->flight_id);
+            $stmt->bindParam(':amount_paid', $data->amount_paid);
+            $stmt->bindParam(':payment_type', $data->payment_type);
             
-            if($booking_id) {
+            if($stmt->execute()) {
+                $booking_id = $db->lastInsertId();
+                
+                // Update flight pending passengers count
+                $updateQuery = "UPDATE flights 
+                               SET pending_passengers = pending_passengers + 1 
+                               WHERE flight_id = :flight_id";
+                $updateStmt = $db->prepare($updateQuery);
+                $updateStmt->bindParam(':flight_id', $data->flight_id);
+                $updateStmt->execute();
+                
+                // If payment from account, deduct balance
+                if($data->payment_type === 'account') {
+                    $balanceQuery = "UPDATE users 
+                                    SET account_balance = account_balance - :amount 
+                                    WHERE user_id = :user_id";
+                    $balanceStmt = $db->prepare($balanceQuery);
+                    $balanceStmt->bindParam(':amount', $data->amount_paid);
+                    $balanceStmt->bindParam(':user_id', $data->passenger_id);
+                    $balanceStmt->execute();
+                }
+                
+                $db->commit();
+                
                 http_response_code(201);
                 echo json_encode(array(
+                    "success" => true,
                     "message" => "Booking created successfully.",
-                    "booking_id" => $booking_id,
-                    "booking_reference" => $booking->booking_reference
+                    "booking_id" => $booking_id
                 ));
             } else {
+                $db->rollBack();
                 http_response_code(500);
-                echo json_encode(array("message" => "Unable to create booking. Please check seat availability."));
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "Unable to create booking."
+                ));
             }
-        } else {
-            http_response_code(400);
-            echo json_encode(array("message" => "Incomplete booking data."));
+        } catch(Exception $e) {
+            $db->rollBack();
+            http_response_code(500);
+            echo json_encode(array(
+                "success" => false,
+                "message" => "Error: " . $e->getMessage()
+            ));
         }
-    }
-    else {
+    } else {
         http_response_code(400);
-        echo json_encode(array("message" => "Invalid action."));
+        echo json_encode(array(
+            "success" => false,
+            "message" => "Incomplete booking data."
+        ));
     }
 }
 

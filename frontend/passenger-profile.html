@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Flight Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #1557b0;
+            --secondary-color: #34a853;
+            --color-white: #ffffff;
+            --color-gray-50: #f8f9fa;
+            --color-gray-700: #3c4043;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --radius-lg: 12px;
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--color-gray-50);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .photo-container {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .photo-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-display i {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+
+        .profile-header h1 {
+            margin: 0.5rem 0;
+            font-size: 2rem;
+        }
+
+        .profile-header p {
+            opacity: 0.9;
+            margin: 0.5rem 0;
+        }
+
+        .edit-btn {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .profile-body {
+            background: white;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .info-section {
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-xl);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-section h2 {
+            color: var(--color-gray-700);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .info-item {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .info-item label {
+            display: block;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .info-item .value {
+            color: var(--color-gray-700);
+            font-size: 1rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-md);
+        }
+
+        .bookings-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .bookings-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .bookings-table tr:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-registered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: #666;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--color-gray-700);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-gray-700);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary-color);
+            background: #e8f0fe;
+        }
+
+        .photo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--color-gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .edit-btn {
+                position: static;
+                margin: 0 auto var(--spacing-md);
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-nav">
+            <div class="nav-brand">
+                <i class="fas fa-plane"></i>
+                <span>Flight Booking</span>
+            </div>
+            <div class="nav-links">
+                <a href="passenger-home.html">Dashboard</a>
+                <a href="search-flights.html">Search Flights</a>
+                <a href="messages.html">Messages</a>
+                <a href="passenger-profile.html" class="active">Profile</a>
+                <button onclick="logout()" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="alertBox" class="alert"></div>
+
+        <div class="profile-header">
+            <button class="edit-btn" onclick="openEditModal()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+            <div class="photo-container">
+                <div class="photo-display" id="photoDisplay">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <h1 id="passengerName">Passenger Name</h1>
+            <p id="passengerEmail">email@example.com</p>
+        </div>
+
+        <div class="profile-body">
+            <div class="info-section">
+                <h2><i class="fas fa-info-circle"></i> Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <div class="value" id="passengerPhone">Not provided</div>
+                    </div>
+                    <div class="info-item">
+                        <label>Account Balance</label>
+                        <div class="value">$<span id="accountBalance">0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2><i class="fas fa-user-circle"></i> About</h2>
+                <div class="info-item">
+                    <div class="value" id="passengerBio">No bio added yet</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2><i class="fas fa-map-marker-alt"></i> Address</h2>
+                <div class="info-item">
+                    <div class="value" id="passengerAddress">No address added yet</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2><i class="fas fa-plane-departure"></i> My Bookings (<span id="bookingsCount">0</span>)</h2>
+                <div id="bookingsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Profile</h2>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label for="editName">Name *</label>
+                    <input type="text" id="editName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="tel" id="editPhone">
+                </div>
+
+                <div class="form-group">
+                    <label for="editPhoto">Profile Photo</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="editPhoto" accept="image/*" onchange="previewPhoto(event)">
+                        <label for="editPhoto" class="file-input-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click to upload photo (optional)</span>
+                        </label>
+                    </div>
+                    <div id="photoPreview" class="photo-preview" style="display: none;">
+                        <img id="photoPreviewImg" src="" alt="Photo Preview">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editBio">Bio</label>
+                    <textarea id="editBio" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAddress">Address</label>
+                    <textarea id="editAddress" placeholder="Your address..."></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+
+        if (!userId || userType !== 'passenger') {
+            alert('Please login as a passenger');
+            window.location.href = 'login.html';
+        }
+
+        let passengerData = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch(`../backend/api/get-profile.php?user_id=${userId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    passengerData = result.user;
+                    displayProfile(result.user);
+                    loadBookings();
+                } else {
+                    showAlert(result.message || 'Failed to load profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error loading profile', 'error');
+            }
+        }
+
+        function displayProfile(user) {
+            document.getElementById('passengerName').textContent = user.name || 'Passenger Name';
+            document.getElementById('passengerEmail').textContent = user.email || '';
+            document.getElementById('accountBalance').textContent = parseFloat(user.account_balance || 0).toFixed(2);
+            
+            // Display photo if exists
+            if (user.photo) {
+                document.getElementById('photoDisplay').innerHTML = `<img src="${user.photo}" alt="Profile Photo">`;
+            }
+            
+            // Display phone
+            if (user.tel && user.tel.trim()) {
+                document.getElementById('passengerPhone').textContent = user.tel;
+            }
+            
+            // Display bio
+            if (user.bio && user.bio.trim()) {
+                document.getElementById('passengerBio').textContent = user.bio;
+            }
+            
+            // Display address
+            if (user.address && user.address.trim()) {
+                document.getElementById('passengerAddress').textContent = user.address;
+            }
+        }
+
+        async function loadBookings() {
+            try {
+                const response = await fetch(`../backend/api/passenger-bookings.php?passenger_id=${userId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    displayBookings(result.bookings);
+                    document.getElementById('bookingsCount').textContent = result.count;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function displayBookings(bookings) {
+            const container = document.getElementById('bookingsContainer');
+            
+            if (bookings.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-plane-slash"></i><p>No bookings yet</p></div>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Flight Code</th>
+                            <th>Flight Name</th>
+                            <th>Route</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            bookings.forEach(booking => {
+                const statusClass = `status-${booking.status}`;
+
+                tableHTML += `
+                    <tr onclick="window.location.href='flight-info.html?id=${booking.flight_id}'">
+                        <td>${booking.flight_code}</td>
+                        <td>${booking.flight_name}</td>
+                        <td>${booking.route || 'N/A'}</td>
+                        <td>$${parseFloat(booking.amount_paid).toFixed(2)}</td>
+                        <td><span class="status-badge ${statusClass}">${booking.status.toUpperCase()}</span></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        function openEditModal() {
+            if (passengerData) {
+                document.getElementById('editName').value = passengerData.name || '';
+                document.getElementById('editPhone').value = passengerData.tel || '';
+                document.getElementById('editBio').value = passengerData.bio || '';
+                document.getElementById('editAddress').value = passengerData.address || '';
+            }
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editProfileForm').reset();
+            document.getElementById('photoPreview').style.display = 'none';
+        }
+
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreviewImg').src = e.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('user_id', userId);
+            formData.append('name', document.getElementById('editName').value.trim());
+            formData.append('tel', document.getElementById('editPhone').value.trim());
+            formData.append('bio', document.getElementById('editBio').value.trim());
+            formData.append('address', document.getElementById('editAddress').value.trim());
+            
+            const photoFile = document.getElementById('editPhoto').files[0];
+            if (photoFile) {
+                formData.append('photo', photoFile);
+            }
+
+            try {
+                const response = await fetch('../backend/api/update-profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Profile updated successfully!', 'success');
+                    closeEditModal();
+                    loadProfile();
+                    
+                    // Update localStorage
+                    localStorage.setItem('userName', document.getElementById('editName').value.trim());
+                } else {
+                    showAlert(result.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error. Please try again.', 'error');
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        };
+    </script>
+</body>
+</html>
+        
+        if (!userId || userType !== 'passenger') {
+            alert('Please login as a passenger');
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const user = data.user;
+                    
+                    // Update header
+                    document.getElementById('profileName').textContent = user.name;
+                    document.getElementById('profileEmail').textContent = user.email;
+                    document.getElementById('accountBalance').textContent = parseFloat(user.account_balance).toFixed(2);
+                    document.getElementById('navBalance').textContent = parseFloat(user.account_balance).toFixed(2);
+                    
+                    // Update avatar
+                    const avatar = document.getElementById('profileAvatar');
+                    avatar.textContent = user.name.charAt(0).toUpperCase();
+                    
+                    // Update form
+                    document.getElementById('name').value = user.name;
+                    document.getElementById('email').value = user.email;
+                    document.getElementById('tel').value = user.tel || '';
+                    
+                    // Store in localStorage
+                    localStorage.setItem('userName', user.name);
+                    localStorage.setItem('accountBalance', user.account_balance);
+                } else {
+                    alert(data.message || 'Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile. Please try again.');
+            }
+        }
+
+        async function updateProfile(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const tel = document.getElementById('tel').value.trim();
+            
+            if (!name || !tel) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('user_id', userId);
+                formData.append('name', name);
+                formData.append('tel', tel);
+                
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/update-profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                    localStorage.setItem('userName', name);
+                    loadProfile();
+                } else {
+                    alert(data.message || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Failed to update profile. Please try again.');
+            }
+        }
+
+        async function changePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('user_id', userId);
+                formData.append('current_password', currentPassword);
+                formData.append('new_password', newPassword);
+                
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/change-password.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Password changed successfully!');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    alert(data.message || 'Failed to change password');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Failed to change password. Please try again.');
+            }
+        }
+
+        // Load profile on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+        });
+    </script>
+</body>
+</html>

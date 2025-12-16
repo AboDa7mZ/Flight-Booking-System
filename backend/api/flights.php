@@ -61,14 +61,62 @@ if($method == "GET") {
     // GET FLIGHT BY ID
     else if(isset($_GET['id'])) {
         $flight_id = $_GET['id'];
-        $flight_data = $flight->getFlightById($flight_id);
         
-        if($flight_data) {
-            http_response_code(200);
-            echo json_encode($flight_data);
-        } else {
-            http_response_code(404);
-            echo json_encode(array("message" => "Flight not found."));
+        try {
+            // Query for single flight with company info
+            $query = "SELECT 
+                        f.flight_id,
+                        f.flight_name,
+                        f.flight_code,
+                        f.fees,
+                        f.max_passengers,
+                        f.registered_passengers,
+                        f.pending_passengers,
+                        f.is_completed,
+                        f.company_id,
+                        u.name as company_name
+                      FROM flights f
+                      INNER JOIN users u ON f.company_id = u.user_id
+                      WHERE f.flight_id = :flight_id";
+            
+            $stmt = $db->prepare($query);
+            $stmt->bindParam(':flight_id', $flight_id);
+            $stmt->execute();
+            
+            $flight_data = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if($flight_data) {
+                // Get route from flight_itinerary
+                $route_query = "SELECT city 
+                               FROM flight_itinerary 
+                               WHERE flight_id = :flight_id 
+                               ORDER BY sequence_order";
+                $route_stmt = $db->prepare($route_query);
+                $route_stmt->bindParam(':flight_id', $flight_id);
+                $route_stmt->execute();
+                $cities = $route_stmt->fetchAll(PDO::FETCH_COLUMN);
+                
+                // Build route string
+                $flight_data['route'] = implode(' - ', $cities);
+                
+                http_response_code(200);
+                echo json_encode(array(
+                    "success" => true,
+                    "flight" => $flight_data
+                ));
+            } else {
+                http_response_code(404);
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "Flight not found."
+                ));
+            }
+        } catch(Exception $e) {
+            http_response_code(500);
+            echo json_encode(array(
+                "success" => false,
+                "message" => "Error: " . $e->getMessage()
+            ));
         }
     }
     

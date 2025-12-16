@@ -2,6 +2,62 @@
  * Main JavaScript - UI Interactions & Animations
  */
 
+// Available cities
+const cities = [
+    'New York',
+    'London',
+    'Los Angeles',
+    'Honolulu',
+    'Tokyo',
+    'Miami',
+    'Paris',
+    'Chicago',
+    'Dubai',
+    'Boston',
+    'Berlin',
+    'San Francisco',
+    'Seattle',
+    'Las Vegas',
+    'Orlando',
+    'Rome',
+    'Barcelona',
+    'Amsterdam',
+    'Singapore',
+    'Hong Kong',
+    'Sydney',
+    'Toronto',
+    'Vancouver',
+    'Mexico City',
+    'Bangkok'
+];
+
+// Load cities into select dropdowns
+function loadCities() {
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+    
+    if (fromSelect && toSelect) {
+        cities.forEach(city => {
+            const option1 = new Option(city, city);
+            const option2 = new Option(city, city);
+            fromSelect.add(option1);
+            toSelect.add(option2);
+        });
+    }
+}
+
+// Swap cities function
+function swapCities() {
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+    
+    if (fromSelect && toSelect) {
+        const temp = fromSelect.value;
+        fromSelect.value = toSelect.value;
+        toSelect.value = temp;
+    }
+}
+
 // Mobile Menu Toggle
 const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
 const navMenu = document.querySelector('.nav-menu');
@@ -285,10 +341,49 @@ async function loadAirports() {
     }
 }
 
+// Flight Search Form
+const flightSearchForm = document.getElementById('flightSearchForm');
+if (flightSearchForm) {
+    flightSearchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const from = document.getElementById('from').value;
+        const to = document.getElementById('to').value;
+        
+        if (!from || !to) {
+            alert('Please select both departure and destination cities');
+            return;
+        }
+        
+        if (from === to) {
+            alert('Departure and destination cities must be different');
+            return;
+        }
+        
+        // Check if user is logged in
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+        
+        if (!userId) {
+            alert('Please login to search for flights');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        if (userType === 'passenger') {
+            window.location.href = `search-flights.html?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        } else {
+            alert('Please login as a passenger to search flights');
+            window.location.href = 'login.html';
+        }
+    });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     checkAuth();
+    loadCities();
     
     // Give a small delay to ensure all elements are rendered
     setTimeout(() => {

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Details - Flight Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #1557b0;
+            --secondary-color: #34a853;
+            --danger-color: #ea4335;
+            --warning-color: #fbbc04;
+            --color-white: #ffffff;
+            --color-gray-50: #f8f9fa;
+            --color-gray-700: #3c4043;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --radius-lg: 12px;
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--color-gray-50);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .flight-details-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .flight-title {
+            flex: 1;
+        }
+
+        .flight-title h1 {
+            margin: 0 0 0.5rem 0;
+            color: var(--color-gray-700);
+            font-size: 2rem;
+        }
+
+        .flight-code {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .flight-status {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .flight-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: var(--spacing-md);
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item .value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-gray-700);
+        }
+
+        .route-display {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .route-display h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .route-display .route {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .passengers-section {
+            margin-top: var(--spacing-xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-header h2 {
+            color: var(--color-gray-700);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-warning {
+            background: var(--warning-color);
+        }
+
+        .passengers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .passengers-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .passengers-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .passengers-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .payment-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .payment-account {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .payment-cash {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-registered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions-section {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: #666;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: var(--spacing-xl);
+            font-size: 1.2rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-nav">
+            <div class="nav-brand">
+                <i class="fas fa-plane"></i>
+                <span>Flight Booking</span>
+            </div>
+            <div class="nav-links">
+                <a href="company-home.html">Dashboard</a>
+                <a href="add-flight.html">Add Flight</a>
+                <a href="company-messages.html">Messages</a>
+                <button onclick="logout()" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="company-home.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div id="alertBox" class="alert"></div>
+        <div id="loadingState" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading flight details...
+        </div>
+
+        <div id="flightContent" style="display: none;">
+            <div class="flight-details-card">
+                <div class="flight-header">
+                    <div class="flight-title">
+                        <div class="flight-code" id="flightCode">-</div>
+                        <h1 id="flightName">-</h1>
+                        <span class="flight-status" id="flightStatus">Active</span>
+                    </div>
+                </div>
+
+                <div class="route-display">
+                    <h3><i class="fas fa-route"></i> Flight Route</h3>
+                    <div class="route" id="flightRoute">-</div>
+                </div>
+
+                <div class="flight-info-grid">
+                    <div class="info-item">
+                        <label><i class="fas fa-ticket-alt"></i> Ticket Price</label>
+                        <div class="value">$<span id="flightFees">0</span></div>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-users"></i> Max Passengers</label>
+                        <div class="value" id="maxPassengers">0</div>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-user-check"></i> Registered</label>
+                        <div class="value" id="registeredCount">0</div>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-user-clock"></i> Pending</label>
+                        <div class="value" id="pendingCount">0</div>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-chair"></i> Available Seats</label>
+                        <div class="value" id="availableSeats">0</div>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-dollar-sign"></i> Total Revenue</label>
+                        <div class="value">$<span id="totalRevenue">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Passengers -->
+            <div class="flight-details-card passengers-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-clock"></i> Pending Passengers</h2>
+                    <span class="badge badge-warning" id="pendingBadge">0</span>
+                </div>
+                <div id="pendingPassengersContainer"></div>
+            </div>
+
+            <!-- Registered Passengers -->
+            <div class="flight-details-card passengers-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-check"></i> Registered Passengers</h2>
+                    <span class="badge" id="registeredBadge">0</span>
+                </div>
+                <div id="registeredPassengersContainer"></div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flight-details-card">
+                <div class="actions-section">
+                    <button class="btn btn-danger" id="cancelFlightBtn" onclick="confirmCancelFlight()">
+                        <i class="fas fa-ban"></i> Cancel Flight & Refund All Passengers
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+
+        if (!userId || userType !== 'company') {
+            alert('Please login as a company');
+            window.location.href = 'login.html';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const flightId = urlParams.get('id');
+
+        if (!flightId) {
+            alert('No flight ID provided');
+            window.location.href = 'company-home.html';
+        }
+
+        let flightData = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            loadFlightDetails();
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadFlightDetails() {
+            try {
+                const response = await fetch(`../backend/api/company-flight-details.php?flight_id=${flightId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    flightData = result.flight;
+                    displayFlightDetails(result.flight);
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('flightContent').style.display = 'block';
+                } else {
+                    showAlert(result.message || 'Failed to load flight details', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'company-home.html';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error loading flight details', 'error');
+            }
+        }
+
+        function displayFlightDetails(flight) {
+            document.getElementById('flightCode').textContent = flight.flight_code;
+            document.getElementById('flightName').textContent = flight.flight_name;
+            document.getElementById('flightRoute').textContent = flight.route;
+            document.getElementById('flightFees').textContent = parseFloat(flight.fees).toFixed(2);
+            document.getElementById('maxPassengers').textContent = flight.max_passengers;
+            document.getElementById('registeredCount').textContent = flight.registered_passengers;
+            document.getElementById('pendingCount').textContent = flight.pending_passengers;
+            
+            const available = flight.max_passengers - flight.registered_passengers - flight.pending_passengers;
+            document.getElementById('availableSeats').textContent = available;
+
+            const totalRevenue = (flight.registered_passengers + flight.pending_passengers) * parseFloat(flight.fees);
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2);
+
+            // Status
+            const statusEl = document.getElementById('flightStatus');
+            if (flight.is_completed == 1) {
+                statusEl.textContent = 'Completed';
+                statusEl.className = 'flight-status status-completed';
+                document.getElementById('cancelFlightBtn').disabled = true;
+            } else {
+                statusEl.textContent = 'Active';
+                statusEl.className = 'flight-status status-active';
+            }
+
+            // Display passengers
+            displayPassengers(flight.pending_passengers_list, 'pendingPassengersContainer', 'pendingBadge');
+            displayPassengers(flight.registered_passengers_list, 'registeredPassengersContainer', 'registeredBadge');
+        }
+
+        function displayPassengers(passengers, containerId, badgeId) {
+            const container = document.getElementById(containerId);
+            const badge = document.getElementById(badgeId);
+            
+            badge.textContent = passengers.length;
+
+            if (passengers.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No passengers in this category</p></div>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="passengers-table">
+                    <thead>
+                        <tr>
+                            <th>Passenger Name</th>
+                            <th>Email</th>
+                            <th>Payment Type</th>
+                            <th>Amount Paid</th>
+                            <th>Booking Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            passengers.forEach(passenger => {
+                const paymentClass = passenger.payment_type === 'account' ? 'payment-account' : 'payment-cash';
+                const statusClass = `status-${passenger.status}`;
+                
+                tableHTML += `
+                    <tr>
+                        <td><i class="fas fa-user"></i> ${passenger.name}</td>
+                        <td>${passenger.email}</td>
+                        <td><span class="payment-badge ${paymentClass}">${passenger.payment_type.toUpperCase()}</span></td>
+                        <td>$${parseFloat(passenger.amount_paid).toFixed(2)}</td>
+                        <td>${new Date(passenger.booking_date).toLocaleDateString()}</td>
+                        <td><span class="status-badge ${statusClass}">${passenger.status.toUpperCase()}</span></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        function confirmCancelFlight() {
+            if (!flightData) return;
+
+            const totalPassengers = flightData.pending_passengers_list.length + flightData.registered_passengers_list.length;
+            const message = `Are you sure you want to cancel this flight?\n\n` +
+                          `This will refund ${totalPassengers} passenger(s) and mark the flight as completed.\n` +
+                          `Total refund amount: $${(totalPassengers * parseFloat(flightData.fees)).toFixed(2)}\n\n` +
+                          `This action cannot be undone.`;
+
+            if (confirm(message)) {
+                cancelFlight();
+            }
+        }
+
+        async function cancelFlight() {
+            const btn = document.getElementById('cancelFlightBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const response = await fetch('../backend/api/cancel-flight.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        flight_id: flightId,
+                        company_id: userId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(`Flight cancelled successfully! Refunded ${result.refunded_count} passengers.`, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'company-home.html';
+                    }, 2000);
+                } else {
+                    showAlert(result.message || 'Failed to cancel flight', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-ban"></i> Cancel Flight & Refund All Passengers';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-ban"></i> Cancel Flight & Refund All Passengers';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -51,32 +51,54 @@
                     Experience seamless flight booking with the world's most trusted travel platform. 
                     Compare prices, choose your perfect flight, and embark on unforgettable journeys.
                 </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-plane"></i>
+                        <div>
+                            <strong>1000+</strong>
+                            <span>Airlines</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>5000+</strong>
+                            <span>Destinations</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <strong>10M+</strong>
+                            <span>Happy Travelers</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Flight Search Card -->
+            <!-- Quick Search Card -->
             <div class="search-card">
-                <div class="search-tabs">
-                    <button class="tab-btn active" data-tab="one-way">
-                        <i class="fas fa-plane"></i> One Way
-                    </button>
-                    <button class="tab-btn" data-tab="round-trip">
-                        <i class="fas fa-plane"></i><i class="fas fa-plane fa-flip-horizontal"></i> Round Trip
-                    </button>
-                    <button class="tab-btn" data-tab="multi-city">
-                        <i class="fas fa-route"></i> Multi-City
-                    </button>
+                <div class="search-header">
+                    <h3><i class="fas fa-search"></i> Find Your Perfect Flight</h3>
+                    <p>Search from thousands of available flights</p>
                 </div>
 
                 <form id="flightSearchForm" class="search-form">
-                    <div class="form-grid">
+                    <div class="form-grid-simple">
                         <div class="form-group">
                             <label for="from">
                                 <i class="fas fa-plane-departure"></i>
                                 From
                             </label>
                             <select id="from" name="from" required>
-                                <option value="">Select Airport</option>
+                                <option value="">Select City</option>
                             </select>
+                        </div>
+
+                        <div class="swap-button">
+                            <button type="button" onclick="swapCities()" title="Swap cities">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
                         </div>
 
                         <div class="form-group">
@@ -85,50 +107,7 @@
                                 To
                             </label>
                             <select id="to" name="to" required>
-                                <option value="">Select Airport</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="departure">
-                                <i class="fas fa-calendar-alt"></i>
-                                Departure
-                            </label>
-                            <input type="date" id="departure" name="departure" required>
-                        </div>
-
-                        <div class="form-group return-date" style="display: none;">
-                            <label for="return">
-                                <i class="fas fa-calendar-alt"></i>
-                                Return
-                            </label>
-                            <input type="date" id="return" name="return">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="passengers">
-                                <i class="fas fa-users"></i>
-                                Passengers
-                            </label>
-                            <select id="passengers" name="passengers">
-                                <option value="1">1 Passenger</option>
-                                <option value="2">2 Passengers</option>
-                                <option value="3">3 Passengers</option>
-                                <option value="4">4 Passengers</option>
-                                <option value="5">5 Passengers</option>
-                                <option value="6">6+ Passengers</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="class">
-                                <i class="fas fa-chair"></i>
-                                Class
-                            </label>
-                            <select id="class" name="class">
-                                <option value="economy">Economy</option>
-                                <option value="business">Business</option>
-                                <option value="first_class">First Class</option>
+                                <option value="">Select City</option>
                             </select>
                         </div>
                     </div>

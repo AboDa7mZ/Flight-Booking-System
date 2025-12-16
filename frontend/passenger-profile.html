@@ -556,7 +556,7 @@
 
         async function loadProfile() {
             try {
-                const response = await fetch(`../backend/api/get-profile.php?user_id=${userId}`);
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -600,7 +600,7 @@
 
         async function loadBookings() {
             try {
-                const response = await fetch(`../backend/api/passenger-bookings.php?passenger_id=${userId}`);
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/passenger-bookings.php?passenger_id=${userId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -700,7 +700,7 @@
             }
 
             try {
-                const response = await fetch('../backend/api/update-profile.php', {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/update-profile.php', {
                     method: 'POST',
                     body: formData
                 });

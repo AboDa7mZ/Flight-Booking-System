@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking System - Your Journey Starts Here</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+            color: white;
+            padding: 80px 20px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #1a73e8;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #1a73e8;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: #202124;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1a73e8, #1557b0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #202124;
+        }
+
+        .feature-card p {
+            color: #5f6368;
+            line-height: 1.6;
+        }
+
+        /* Account Types Section */
+        .account-types {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+            padding: 80px 20px;
+        }
+
+        .account-cards {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .account-card {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .account-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .account-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #1a73e8, #1557b0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .account-card h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #202124;
+        }
+
+        .account-card p {
+            color: #5f6368;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .account-card ul {
+            text-align: left;
+            margin-bottom: 30px;
+            list-style: none;
+        }
+
+        .account-card ul li {
+            padding: 8px 0;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .account-card ul li i {
+            color: #34a853;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+            color: white;
+            padding: 60px 20px;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: white;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #202124;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            color: #5f6368;
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #202124;
+            color: white;
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="fas fa-plane"></i> Flight Booking System
+            </h1>
+            <p class="hero-subtitle">
+                Book your flights easily, manage your bookings, and connect with trusted airlines worldwide. 
+                Your journey to the skies starts here.
+            </p>
+            <div class="hero-buttons">
+                <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </a>
+                <a href="register.html" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <h2 class="section-title">Why Choose Our Platform?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Easy Search</h3>
+                <p>Find flights from multiple airlines with our powerful search engine. Compare prices and routes instantly.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Booking</h3>
+                <p>Your transactions are protected with industry-standard encryption and security protocols.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Flexible Payment</h3>
+                <p>Pay with account balance or cash on booking. Multiple payment options for your convenience.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Direct Messaging</h3>
+                <p>Communicate directly with airlines for inquiries, special requests, and support.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Booking History</h3>
+                <p>Track all your bookings, view flight details, and manage your travel plans in one place.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Real-time Updates</h3>
+                <p>Get instant notifications about booking confirmations, flight status, and important updates.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Account Types -->
+    <section class="account-types">
+        <h2 class="section-title">Choose Your Account Type</h2>
+        <div class="account-cards">
+            <div class="account-card">
+                <div class="account-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Passenger</h3>
+                <p>For travelers looking to book flights and manage their journeys</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Search & book flights</li>
+                    <li><i class="fas fa-check-circle"></i> Manage bookings</li>
+                    <li><i class="fas fa-check-circle"></i> Message airlines</li>
+                    <li><i class="fas fa-check-circle"></i> Track travel history</li>
+                    <li><i class="fas fa-check-circle"></i> Account balance system</li>
+                </ul>
+                <a href="register.html?type=passenger" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Register as Passenger
+                </a>
+            </div>
+
+            <div class="account-card">
+                <div class="account-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Company</h3>
+                <p>For airlines and flight operators to manage their services</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Add & manage flights</li>
+                    <li><i class="fas fa-check-circle"></i> View passenger bookings</li>
+                    <li><i class="fas fa-check-circle"></i> Respond to messages</li>
+                    <li><i class="fas fa-check-circle"></i> Track revenue & stats</li>
+                    <li><i class="fas fa-check-circle"></i> Cancel & refund flights</li>
+                </ul>
+                <a href="register.html?type=company" class="btn btn-primary">
+                    <i class="fas fa-building"></i> Register as Company
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Airlines</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Flights Daily</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Happy Travelers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join thousands of travelers and airlines using our platform every day</p>
+            <div class="hero-buttons">
+                <a href="register.html" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> Get Started Now
+                </a>
+                <a href="login.html" class="btn btn-secondary" style="color: #1a73e8; border-color: #1a73e8;">
+                    <i class="fas fa-sign-in-alt"></i> Already Have Account?
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><i class="fas fa-plane"></i> Flight Booking System</p>
+        <p>&copy; 2025 All Rights Reserved</p>
+        <p>Connecting travelers with airlines worldwide</p>
+    </footer>
+
+    <script>
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const userId = localStorage.getItem('userId');
+            const userType = localStorage.getItem('userType');
+            
+            if (userId && userType) {
+                // Redirect to appropriate home page
+                if (userType === 'passenger') {
+                    window.location.href = 'passenger-home.html';
+                } else if (userType === 'company') {
+                    window.location.href = 'company-home.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

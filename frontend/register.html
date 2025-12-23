@@ -280,6 +280,15 @@
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
         
+        // Auto-select account type from URL parameter
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            if (type && (type === 'passenger' || type === 'company')) {
+                document.getElementById('userType').value = type;
+            }
+        });
+        
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Register - SkyVoyage Flight Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--spacing-xl);
+        }
+        
+        .auth-container {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            max-width: 450px;
+            width: 100%;
+            padding: var(--spacing-3xl);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-2xl);
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .auth-header h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-3xl);
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .auth-header p {
+            color: var(--color-gray-600);
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .auth-form label {
+            display: block;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            transition: var(--transition-base);
+        }
+        
+        .auth-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+        
+        .auth-submit {
+            width: 100%;
+            padding: var(--spacing-lg);
+            background: var(--primary-color);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .auth-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+            color: var(--color-gray-500);
+        }
+        
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-gray-300);
+        }
+        
+        .social-login {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            background: var(--color-white);
+            color: var(--color-gray-700);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        
+        .social-btn:hover {
+            background: var(--color-gray-50);
+            border-color: var(--color-gray-400);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            color: var(--color-gray-600);
+        }
+        
+        .auth-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: var(--danger-color);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            background: #efe;
+            color: var(--secondary-color);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .password-requirements {
+            font-size: var(--text-sm);
+            color: var(--color-gray-600);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .password-requirements ul {
+            margin-left: var(--spacing-lg);
+            margin-top: var(--spacing-xs);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <a href="index.html" class="auth-logo">
+                    <i class="fas fa-plane-departure"></i>
+                    <span>SkyVoyage</span>
+                </a>
+                <h1>Create Account</h1>
+                <p>Join us and start your journey</p>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="userType">Account Type</label>
+                    <select id="userType" name="userType" required style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--color-gray-300); border-radius: var(--radius-md); font-size: var(--text-base);">
+                        <option value="">Select Account Type</option>
+                        <option value="passenger">Passenger</option>
+                        <option value="company">Company</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Full name or Company name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tel">Phone Number</label>
+                    <input type="tel" id="tel" name="tel" required placeholder="+1234567890">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-enter your password">
+                </div>
+                
+                <button type="submit" class="auth-submit">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="social-btn">
+                    <i class="fab fa-google"></i>
+                    Sign up with Google
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-facebook-f"></i>
+                    Sign up with Facebook
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Auto-select account type from URL parameter
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            if (type && (type === 'passenger' || type === 'company')) {
+                document.getElementById('userType').value = type;
+            }
+        });
+        
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userType = document.getElementById('userType').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const tel = document.getElementById('tel').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (!userType) {
+                errorMessage.textContent = 'Please select an account type';
+                errorMessage.classList.add('show');
+                successMessage.classList.remove('show');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.classList.add('show');
+                successMessage.classList.remove('show');
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters';
+                errorMessage.classList.add('show');
+                successMessage.classList.remove('show');
+                return;
+            }
+            
+            try {
+                errorMessage.classList.remove('show');
+                successMessage.classList.remove('show');
+                
+                // Send registration data to API
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/register.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_type: userType,
+                        name: name,
+                        email: email,
+                        tel: tel,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successMessage.textContent = 'Account created successfully! Redirecting to login...';
+                    successMessage.classList.add('show');
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    errorMessage.textContent = data.message || 'Registration failed';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

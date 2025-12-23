@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Company Dashboard - Flight Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #1557b0;
+            --secondary-color: #34a853;
+            --accent-color: #fbbc04;
+            --danger-color: #ea4335;
+            --color-white: #ffffff;
+            --color-gray-50: #f8f9fa;
+            --color-gray-100: #f1f3f4;
+            --color-gray-200: #e8eaed;
+            --color-gray-300: #dadce0;
+            --color-gray-600: #5f6368;
+            --color-gray-700: #3c4043;
+            --color-gray-900: #202124;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+        }
+        
+        .dashboard {
+            padding-top: 80px;
+            min-height: 100vh;
+            background: var(--color-gray-50);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--color-white);
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .company-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+        
+        .company-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-4xl);
+            color: var(--primary-color);
+            font-weight: 800;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .company-details h1 {
+            font-size: var(--text-3xl);
+            margin: 0 0 var(--spacing-sm) 0;
+        }
+        
+        .company-meta {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: center;
+            margin-top: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+        
+        .balance-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .balance-card i {
+            font-size: var(--text-2xl);
+            color: var(--accent-color);
+        }
+        
+        .balance-info span {
+            display: block;
+            font-size: var(--text-sm);
+            opacity: 0.9;
+        }
+        
+        .balance-info strong {
+            font-size: var(--text-xl);
+            display: block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .btn-white {
+            background: var(--color-white);
+            color: var(--primary-color);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all 0.2s;
+        }
+        
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid var(--color-white);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all 0.2s;
+        }
+        
+        .btn-outline:hover {
+            background: var(--color-white);
+            color: var(--primary-color);
+        }
+        
+        .dashboard-content {
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .stat-card {
+            background: var(--color-white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .stat-icon.primary {
+            background: rgba(26, 115, 232, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .stat-icon.success {
+            background: rgba(52, 168, 83, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .stat-icon.warning {
+            background: rgba(251, 188, 4, 0.1);
+            color: var(--accent-color);
+        }
+        
+        .stat-icon.info {
+            background: rgba(66, 133, 244, 0.1);
+            color: #4285f4;
+        }
+        
+        .stat-value {
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-label {
+            color: var(--color-gray-600);
+            font-size: var(--text-sm);
+        }
+        
+        .flights-section {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-header h2 {
+            font-size: var(--text-2xl);
+            color: var(--color-gray-900);
+            margin: 0;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .tab-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: 2px solid var(--color-gray-300);
+            background: transparent;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: var(--color-white);
+            border-color: var(--primary-color);
+        }
+        
+        .flights-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .flights-table thead th {
+            text-align: left;
+            padding: var(--spacing-md);
+            background: var(--color-gray-50);
+            font-weight: 700;
+            color: var(--color-gray-700);
+            font-size: var(--text-sm);
+            border-bottom: 2px solid var(--color-gray-200);
+        }
+        
+        .flights-table tbody td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-gray-100);
+            color: var(--color-gray-900);
+        }
+        
+        .flights-table tbody tr {
+            transition: all 0.2s;
+        }
+        
+        .flights-table tbody tr:hover {
+            background: var(--color-gray-50);
+            cursor: pointer;
+        }
+        
+        .flight-code {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .route-display {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-sm);
+        }
+        
+        .route-display i {
+            color: var(--color-gray-600);
+        }
+        
+        .passenger-count {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .passenger-badge {
+            background: var(--color-gray-100);
+            padding: 2px var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .pending-badge {
+            background: rgba(251, 188, 4, 0.1);
+            color: var(--accent-color);
+        }
+        
+        .status-badge {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-active {
+            background: rgba(52, 168, 83, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .status-completed {
+            background: var(--color-gray-200);
+            color: var(--color-gray-700);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--color-gray-600);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--color-gray-300);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @media (max-width: 768px) {
+            .company-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .company-meta {
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flights-table {
+                font-size: var(--text-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="company-home.html" class="logo">
+                <i class="fas fa-plane-departure"></i>
+                <span>Flight Booking</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="company-home.html" class="active">Dashboard</a></li>
+                <li><a href="add-flight.html">My Flights</a></li>
+                <li><a href="company-messages.html">Messages</a></li>
+                <li><a href="company-profile.html">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-text" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="company-profile">
+                    <div class="company-avatar" id="companyAvatar">C</div>
+                    <div class="company-details">
+                        <h1 id="companyName">Company Name</h1>
+                        <div class="company-meta">
+                            <div class="balance-card">
+                                <i class="fas fa-wallet"></i>
+                                <div class="balance-info">
+                                    <span>Account Balance</span>
+                                    <strong>$<span id="accountBalance">0.00</span></strong>
+                                </div>
+                            </div>
+                            <div style="color: rgba(255, 255, 255, 0.9); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Joined <span id="joinedDate">-</span></span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <a href="add-flight.html" class="btn-white">
+                                <i class="fas fa-plus-circle"></i> Add New Flight
+                            </a>
+                            <a href="company-messages.html" class="btn-outline">
+                                <i class="fas fa-comments"></i> Messages
+                            </a>
+                            <a href="company-profile.html" class="btn-outline">
+                                <i class="fas fa-user-edit"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <div class="stat-value" id="totalFlights">0</div>
+                        <div class="stat-label">Total Flights</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-plane-departure"></i>
+                        </div>
+                        <div class="stat-value" id="activeFlights">0</div>
+                        <div class="stat-label">Active Flights</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value" id="totalPassengers">0</div>
+                        <div class="stat-label">Total Passengers</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+                
+                <div class="flights-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-list"></i> My Flights</h2>
+                        <div class="filter-tabs">
+                            <button class="tab-btn active" onclick="filterFlights('all')">All</button>
+                            <button class="tab-btn" onclick="filterFlights('active')">Active</button>
+                            <button class="tab-btn" onclick="filterFlights('completed')">Completed</button>
+                        </div>
+                    </div>
+                    
+                    <div id="flightsContainer">
+                        <table class="flights-table">
+                            <thead>
+                                <tr>
+                                    <th>Flight Code</th>
+                                    <th>Flight Name</th>
+                                    <th>Route</th>
+                                    <th>Passengers</th>
+                                    <th>Fees</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="flightsTableBody">
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Loading flights...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check authentication
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+        const userName = localStorage.getItem('userName');
+        const accountBalance = localStorage.getItem('accountBalance');
+        
+        if (!userId || userType !== 'company') {
+            alert('Please login as a company');
+            window.location.href = 'login.html';
+        }
+        
+        let allFlights = [];
+        let currentFilter = 'all';
+        
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            displayCompanyInfo();
+            loadFlights();
+        });
+        
+        // Display company info
+        function displayCompanyInfo() {
+            document.getElementById('companyName').textContent = userName || 'Company';
+            document.getElementById('accountBalance').textContent = parseFloat(accountBalance || 0).toFixed(2);
+            
+            // Set company avatar
+            const avatar = document.getElementById('companyAvatar');
+            if (userName) {
+                avatar.textContent = userName.charAt(0).toUpperCase();
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
+        // Load company flights
+        async function loadFlights() {
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/company-flights.php?company_id=${userId}`);
+                const data = await response.json();
+                
+                console.log('Flights data:', data);
+                
+                if (data.success && data.flights && data.flights.length > 0) {
+                    allFlights = data.flights;
+                    displayFlights(allFlights);
+                    updateStats(allFlights);
+                } else {
+                    displayEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading flights:', error);
+                displayError();
+            }
+        }
+        
+        function displayFlights(flights) {
+            const tbody = document.getElementById('flightsTableBody');
+            tbody.innerHTML = '';
+            
+            if (flights.length === 0) {
+                displayEmptyState();
+                return;
+            }
+            
+            flights.forEach(flight => {
+                const row = document.createElement('tr');
+                row.onclick = () => window.location.href = `company-flight-details.html?id=${flight.flight_id}`;
+                row.style.cursor = 'pointer';
+                
+                const statusClass = flight.is_completed ? 'status-completed' : 'status-active';
+                const statusText = flight.is_completed ? 'Completed' : 'Active';
+                
+                const registeredCount = parseInt(flight.registered_passengers) || 0;
+                const pendingCount = parseInt(flight.pending_passengers) || 0;
+                const maxPassengers = parseInt(flight.max_passengers) || 0;
+                
+                row.innerHTML = `
+                    <td><span class="flight-code">${flight.flight_code}</span></td>
+                    <td>${flight.flight_name}</td>
+                    <td>
+                        <div class="route-display">
+                            <span>${flight.route}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="passenger-count">
+                            <span>${registeredCount}/${maxPassengers}</span>
+                            ${pendingCount > 0 ? `<span class="passenger-badge pending-badge">+${pendingCount} pending</span>` : ''}
+                        </div>
+                    </td>
+                    <td><strong>$${parseFloat(flight.fees).toFixed(2)}</strong></td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function displayEmptyState() {
+            const tbody = document.getElementById('flightsTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <i class="fas fa-plane-slash"></i>
+                        <h3 style="margin: 1rem 0;">No Flights Found</h3>
+                        <p>You haven't added any flights yet.</p>
+                        <a href="add-flight.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">
+                            <i class="fas fa-plus"></i> Add Your First Flight
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function displayError() {
+            const tbody = document.getElementById('flightsTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                        <h3 style="margin: 1rem 0; color: var(--danger-color);">Error Loading Flights</h3>
+                        <p>Please refresh the page to try again.</p>
+                        <button onclick="loadFlights()" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function updateStats(flights) {
+            const totalFlights = flights.length;
+            const activeFlights = flights.filter(f => !f.is_completed).length;
+            
+            let totalPassengers = 0;
+            let totalRevenue = 0;
+            
+            flights.forEach(flight => {
+                const registered = parseInt(flight.registered_passengers) || 0;
+                const pending = parseInt(flight.pending_passengers) || 0;
+                const fees = parseFloat(flight.fees) || 0;
+                
+                totalPassengers += registered + pending;
+                totalRevenue += (registered * fees);
+            });
+            
+            document.getElementById('totalFlights').textContent = totalFlights;
+            document.getElementById('activeFlights').textContent = activeFlights;
+            document.getElementById('totalPassengers').textContent = totalPassengers;
+            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+        }
+        
+        function filterFlights(filter) {
+            currentFilter = filter;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter flights
+            let filteredFlights = allFlights;
+            if (filter === 'active') {
+                filteredFlights = allFlights.filter(f => !f.is_completed);
+            } else if (filter === 'completed') {
+                filteredFlights = allFlights.filter(f => f.is_completed);
+            }
+            
+            displayFlights(filteredFlights);
+        }
+    </script>
+</body>
+</html>

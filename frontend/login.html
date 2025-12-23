@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SkyVoyage Flight Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--spacing-xl);
+        }
+        
+        .auth-container {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            max-width: 450px;
+            width: 100%;
+            padding: var(--spacing-3xl);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-2xl);
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .auth-header h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-3xl);
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .auth-header p {
+            color: var(--color-gray-600);
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .auth-form label {
+            display: block;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            transition: var(--transition-base);
+        }
+        
+        .auth-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .forgot-password a {
+            color: var(--primary-color);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-submit {
+            width: 100%;
+            padding: var(--spacing-lg);
+            background: var(--primary-color);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .auth-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+            color: var(--color-gray-500);
+        }
+        
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-gray-300);
+        }
+        
+        .social-login {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            background: var(--color-white);
+            color: var(--color-gray-700);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        
+        .social-btn:hover {
+            background: var(--color-gray-50);
+            border-color: var(--color-gray-400);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            color: var(--color-gray-600);
+        }
+        
+        .auth-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: var(--danger-color);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <a href="index.html" class="auth-logo">
+                    <i class="fas fa-plane-departure"></i>
+                    <span>SkyVoyage</span>
+                </a>
+                <h1>Welcome Back</h1>
+                <p>Login to your account to continue</p>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#forgot">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="auth-submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="social-btn">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-facebook-f"></i>
+                    Continue with Facebook
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                Don't have an account? <a href="register.html">Sign up</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                errorMessage.classList.remove('show');
+                
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.success) {
+                    // Save auth data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userId', data.user.user_id);
+                    localStorage.setItem('userType', data.user.user_type);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('accountBalance', data.user.account_balance);
+                    
+                    // Redirect based on user type
+                    if (data.user.user_type === 'company') {
+                        window.location.href = 'company-home.html';
+                    } else {
+                        window.location.href = 'passenger-home.html';
+                    }
+                } else {
+                    errorMessage.textContent = data.message || 'Login failed';
+                    errorMessage.classList.add('show');
+                }
+                
+            } catch (error) {
+                errorMessage.textContent = error.message || 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

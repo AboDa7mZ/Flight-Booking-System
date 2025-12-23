@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Flight Information - Flight Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #4CAF50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --dark-color: #1a1a2e;
+            --light-color: #f5f5f5;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .flight-info-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            transition: gap 0.3s ease;
+        }
+        
+        .back-button:hover {
+            gap: 0.75rem;
+        }
+        
+        .flight-detail-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .flight-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .flight-icon-lg {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), #1976D2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .flight-info h1 {
+            font-size: 2rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--dark-color);
+        }
+        
+        .flight-code {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .price-tag {
+            background: linear-gradient(135deg, var(--secondary-color), #388E3C);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+        
+        .price-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+        }
+        
+        .price-amount {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+        }
+        
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .info-content h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 0.875rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-content p {
+            margin: 0;
+            font-size: 1.125rem;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .route-display {
+            background: var(--light-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+        
+        .route-display h2 {
+            margin: 0 0 1rem 0;
+            color: var(--dark-color);
+            font-size: 1.25rem;
+        }
+        
+        .route-path {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+        
+        .company-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .company-details h3 {
+            margin: 0 0 0.25rem 0;
+            color: var(--dark-color);
+            font-size: 1.125rem;
+        }
+        
+        .company-details p {
+            margin: 0;
+            color: #666;
+        }
+        
+        .booking-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+        }
+        
+        .booking-section h2 {
+            margin: 0 0 1.5rem 0;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .payment-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-option {
+            border: 2px solid var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(33, 150, 243, 0.05);
+        }
+        
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        .payment-radio {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .payment-option.selected .payment-radio {
+            border-color: var(--primary-color);
+        }
+        
+        .payment-option.selected .payment-radio::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-info h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.125rem;
+            color: var(--dark-color);
+        }
+        
+        .payment-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        .payment-balance {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #1976D2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .availability-badge.available {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .availability-badge.limited {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .availability-badge.full {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger-color);
+        }
+        
+        @media (max-width: 768px) {
+            .flight-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flight-info-container">
+        <a href="search-results.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Search Results
+        </a>
+        
+        <div class="flight-detail-card">
+            <div class="flight-header">
+                <div class="flight-title">
+                    <div class="flight-icon-lg">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="flight-info">
+                        <h1 id="flightName">Loading...</h1>
+                        <span class="flight-code" id="flightCode">---</span>
+                    </div>
+                </div>
+                <div class="price-tag">
+                    <div class="price-label">Price per Ticket</div>
+                    <div class="price-amount" id="flightPrice">$0.00</div>
+                </div>
+            </div>
+            
+            <div class="company-info">
+                <div class="company-avatar" id="companyAvatar">C</div>
+                <div class="company-details">
+                    <h3 id="companyName">Company Name</h3>
+                    <p>Operated by this airline company</p>
+                </div>
+            </div>
+            
+            <div class="route-display">
+                <h2><i class="fas fa-route"></i> Flight Route</h2>
+                <div class="route-path" id="flightRoute">
+                    <span>Loading...</span>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Max Passengers</h3>
+                        <p id="maxPassengers">0</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Available Seats</h3>
+                        <p id="availableSeats">0</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Status</h3>
+                        <p id="flightStatus">Active</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Availability</h3>
+                        <p>
+                            <span class="availability-badge" id="availabilityBadge">Available</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="booking-section">
+            <h2><i class="fas fa-ticket-alt"></i> Book This Flight</h2>
+            
+            <div class="payment-options">
+                <div class="payment-option" data-payment="account" onclick="selectPayment('account')">
+                    <div class="payment-radio"></div>
+                    <div class="payment-info">
+                        <h3>Pay from Account</h3>
+                        <p>Use your account balance</p>
+                        <p class="payment-balance">Current Balance: $<span id="accountBalance">0.00</span></p>
+                    </div>
+                    <i class="fas fa-wallet" style="font-size: 2rem; color: var(--primary-color);"></i>
+                </div>
+                
+                <div class="payment-option" data-payment="cash" onclick="selectPayment('cash')">
+                    <div class="payment-radio"></div>
+                    <div class="payment-info">
+                        <h3>Pay with Cash</h3>
+                        <p>Deal directly with the company</p>
+                    </div>
+                    <i class="fas fa-money-bill-wave" style="font-size: 2rem; color: var(--secondary-color);"></i>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="bookButton" onclick="bookFlight()" disabled>
+                    <i class="fas fa-check"></i> Book This Flight
+                </button>
+                <a href="messages.html" class="btn btn-secondary" id="messageButton">
+                    <i class="fas fa-comment"></i> Message Company
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let flightData = null;
+        let selectedPayment = null;
+        const userId = localStorage.getItem('userId');
+        const userType = localStorage.getItem('userType');
+        const accountBalance = localStorage.getItem('accountBalance');
+        
+        // Check authentication
+        if (!userId || userType !== 'passenger') {
+            alert('Please login as a passenger');
+            window.location.href = 'login.html';
+        }
+        
+        // Get flight ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const flightId = urlParams.get('id');
+        
+        if (!flightId) {
+            alert('No flight selected');
+            window.location.href = 'search-flights.html';
+        }
+        
+        // Display account balance
+        document.getElementById('accountBalance').textContent = parseFloat(accountBalance || 0).toFixed(2);
+        
+        // Load flight details
+        async function loadFlightDetails() {
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/flights.php?id=${flightId}`);
+                const data = await response.json();
+                
+                if (data.success && data.flight) {
+                    flightData = data.flight;
+                    displayFlightDetails(flightData);
+                } else {
+                    alert('Flight not found');
+                    window.location.href = 'search-flights.html';
+                }
+            } catch (error) {
+                console.error('Error loading flight:', error);
+                alert('Error loading flight details');
+            }
+        }
+        
+        function displayFlightDetails(flight) {
+            document.getElementById('flightName').textContent = flight.flight_name;
+            document.getElementById('flightCode').textContent = flight.flight_code || 'N/A';
+            document.getElementById('flightPrice').textContent = '$' + parseFloat(flight.fees).toFixed(2);
+            document.getElementById('companyName').textContent = flight.company_name;
+            document.getElementById('companyAvatar').textContent = flight.company_name.charAt(0).toUpperCase();
+            document.getElementById('flightRoute').innerHTML = flight.route.replace(/,/g, ' <i class="fas fa-arrow-right"></i> ');
+            document.getElementById('maxPassengers').textContent = flight.max_passengers;
+            
+            const available = flight.max_passengers - flight.registered_passengers - flight.pending_passengers;
+            document.getElementById('availableSeats').textContent = available;
+            document.getElementById('flightStatus').textContent = flight.is_completed ? 'Completed' : 'Active';
+            
+            // Update availability badge
+            const badge = document.getElementById('availabilityBadge');
+            if (flight.is_completed) {
+                badge.className = 'availability-badge full';
+                badge.innerHTML = '<i class="fas fa-times-circle"></i> Completed';
+            } else if (available > 10) {
+                badge.className = 'availability-badge available';
+                badge.innerHTML = '<i class="fas fa-check-circle"></i> Available';
+            } else if (available > 0) {
+                badge.className = 'availability-badge limited';
+                badge.innerHTML = '<i class="fas fa-exclamation-circle"></i> Limited Seats';
+            } else {
+                badge.className = 'availability-badge full';
+                badge.innerHTML = '<i class="fas fa-times-circle"></i> Fully Booked';
+            }
+            
+            // Update message button link with company ID
+            const messageButton = document.getElementById('messageButton');
+            messageButton.href = `messages.html?company_id=${flight.company_id}&company_name=${encodeURIComponent(flight.company_name)}`;
+        }
+        
+        function selectPayment(type) {
+            selectedPayment = type;
+            
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-payment="${type}"]`).classList.add('selected');
+            
+            // Enable book button
+            document.getElementById('bookButton').disabled = false;
+        }
+        
+        async function bookFlight() {
+            if (!selectedPayment) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            if (!flightData) {
+                alert('Flight data not loaded');
+                return;
+            }
+            
+            const available = flightData.max_passengers - flightData.registered_passengers - flightData.pending_passengers;
+            if (available <= 0) {
+                alert('Sorry, this flight is fully booked');
+                return;
+            }
+            
+            const price = parseFloat(flightData.fees);
+            const balance = parseFloat(accountBalance);
+            
+            if (selectedPayment === 'account') {
+                if (balance < price) {
+                    alert(`Insufficient balance. You need $${price.toFixed(2)} but only have $${balance.toFixed(2)}`);
+                    return;
+                }
+                
+                // Confirm booking
+                if (!confirm(`Book this flight for $${price.toFixed(2)}?\n\nYour new balance will be: $${(balance - price).toFixed(2)}`)) {
+                    return;
+                }
+                
+                // Process booking
+                try {
+                    const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/bookings.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            passenger_id: userId,
+                            flight_id: flightId,
+                            payment_type: 'account',
+                            amount_paid: price
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Fetch updated user data from server
+                        try {
+                            const userResponse = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}`);
+                            const userData = await userResponse.json();
+                            
+                            if (userData.success) {
+                                // Update localStorage with fresh data
+                                localStorage.setItem('accountBalance', userData.user.account_balance);
+                            }
+                        } catch (error) {
+                            console.error('Error fetching updated profile:', error);
+                            // Fallback to manual calculation
+                            const newBalance = balance - price;
+                            localStorage.setItem('accountBalance', newBalance.toFixed(2));
+                        }
+                        
+                        alert('Booking successful! Your booking is now pending confirmation.');
+                        window.location.href = 'passenger-home.html';
+                    } else {
+                        alert('Booking failed: ' + (data.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error booking flight:', error);
+                    alert('Error processing booking');
+                }
+            } else if (selectedPayment === 'cash') {
+                alert('Cash payment selected. Please contact the company directly to complete your booking.\n\nUse the "Message Company" button to communicate with them.');
+            }
+        }
+        
+        // Load flight details on page load
+        loadFlightDetails();
+    </script>
+</body>
+</html>

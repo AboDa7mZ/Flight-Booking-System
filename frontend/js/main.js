@@ -304,7 +304,7 @@ function logout() {
 async function loadAirports() {
     console.log('loadAirports function called');
     try {
-        const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/airports.php');
+        const response = await fetch('http://localhost/backend/api/airports.php');
         const data = await response.json();
         console.log('Airports data received:', data);
         

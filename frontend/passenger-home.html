@@ -692,7 +692,7 @@
         async function loadUserProfile() {
             try {
                 const timestamp = new Date().getTime();
-                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}&_=${timestamp}`, {
+                const response = await fetch(`http://localhost/backend/api/get-profile.php?user_id=${userId}&_=${timestamp}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache',
@@ -733,7 +733,7 @@
             showLoading();
             
             try {
-                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/passenger-bookings.php?passenger_id=${userId}`);
+                const response = await fetch(`http://localhost/backend/api/passenger-bookings.php?passenger_id=${userId}`);
                 const data = await response.json();
                 
                 console.log('Bookings data:', data);
@@ -1127,7 +1127,7 @@
             }
             
             try {
-                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/cancel-booking.php', {
+                const response = await fetch('http://localhost/backend/api/cancel-booking.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

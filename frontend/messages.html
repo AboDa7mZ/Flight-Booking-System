@@ -386,7 +386,7 @@
         // Load available companies for passengers to start conversations
         async function loadAvailableCompanies() {
             try {
-                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-companies.php`);
+                const response = await fetch(`http://localhost/backend/api/get-companies.php`);
                 const data = await response.json();
                 
                 if (data.success && data.companies && data.companies.length > 0) {
@@ -457,7 +457,7 @@
         
         async function loadMessages(companyId) {
             try {
-                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/messages.php?user_id=${userId}&company_id=${companyId}`);
+                const response = await fetch(`http://localhost/backend/api/messages.php?user_id=${userId}&company_id=${companyId}`);
                 const data = await response.json();
                 
                 if (data.success && data.messages) {
@@ -507,7 +507,7 @@
             }
             
             try {
-                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/messages.php', {
+                const response = await fetch('http://localhost/backend/api/messages.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

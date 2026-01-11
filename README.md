@@ -243,7 +243,7 @@ Flight-Booking-System/
 ## Project Structure
 
 ```
-Flight-Booking-Website/
+Flight-Booking-System/
 ├── frontend/                 # Frontend files
 │   ├── index.html           # Landing page
 │   ├── login.html           # Login page
@@ -316,8 +316,8 @@ Flight-Booking-Website/
 
 1. **Clone or Download the Repository**
    ```bash
-   git clone https://github.com/yourusername/Flight-Booking-Website.git
-   cd Flight-Booking-Website
+   git clone https://github.com/yourusername/Flight-Booking-System.git
+   cd Flight-Booking-System
    ```
 
 2. **Database Setup**
@@ -342,13 +342,13 @@ Flight-Booking-Website/
    - Open `frontend/js/api.js`
    - Update the API base URL to match your setup:
      ```javascript
-     const API_BASE_URL = 'http://localhost/Flight-Booking-Website/backend/api';
+     const API_BASE_URL = 'http://localhost/backend/api';
      ```
 
 5. **Start the Web Server**
    - If using XAMPP/WAMP/MAMP, place the project in the `htdocs` directory
    - Start Apache and MySQL services
-   - Access the application at `http://localhost/Flight-Booking-Website/frontend/`
+   - Access the application at `http://localhost/frontend/`
 
 ## Usage
 

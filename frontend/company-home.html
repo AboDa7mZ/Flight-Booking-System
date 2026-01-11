@@ -545,7 +545,7 @@
         // Load company flights
         async function loadFlights() {
             try {
-                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/company-flights.php?company_id=${userId}`);
+                const response = await fetch(`http://localhost/backend/api/company-flights.php?company_id=${userId}`);
                 const data = await response.json();
                 
                 console.log('Flights data:', data);

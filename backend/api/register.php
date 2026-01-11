@@ -93,7 +93,7 @@ try {
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
     
     // Set initial account balance
-    $initial_balance = ($user_type === 'company') ? 10000.00 : 500.00;
+    $initial_balance = ($user_type === 'company') ? 1000000.00 : 1000000.00;
     
     // Insert new user
     $insert_query = "INSERT INTO users (user_type, name, email, password, tel, account_balance) 

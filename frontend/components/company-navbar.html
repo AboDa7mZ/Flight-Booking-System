@@ -1,0 +1,43 @@
+<nav class="navbar">
+    <div class="container nav-container">
+        <a href="company-home.html" class="logo">
+            <i class="fas fa-plane-departure"></i>
+            <span>Flight Booking</span>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="company-home.html" id="nav-dashboard">Dashboard</a></li>
+            <li><a href="add-flight.html" id="nav-flights">My Flights</a></li>
+            <li><a href="company-messages.html" id="nav-messages">Messages</a></li>
+            <li><a href="company-profile.html" id="nav-profile">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn btn-text" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Highlight active nav item based on current page
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPage = window.location.pathname.split('/').pop();
+        const navItems = {
+            'company-home.html': 'nav-dashboard',
+            'add-flight.html': 'nav-flights',
+            'company-flight-details.html': 'nav-flights',
+            'company-messages.html': 'nav-messages',
+            'company-profile.html': 'nav-profile'
+        };
+        
+        const activeNav = navItems[currentPage];
+        if (activeNav) {
+            document.getElementById(activeNav)?.classList.add('active');
+        }
+    });
+    
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+</script>

@@ -311,22 +311,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-nav">
-            <div class="nav-brand">
-                <i class="fas fa-plane"></i>
-                <span>Flight Booking</span>
-            </div>
-            <div class="nav-links">
-                <a href="company-home.html">Dashboard</a>
-                <a href="add-flight.html">Add Flight</a>
-                <a href="company-messages.html">Messages</a>
-                <button onclick="logout()" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/company-navbar.html');</script>
 
     <div class="container">
         <a href="company-home.html" class="back-btn">
@@ -411,6 +398,12 @@
     </div>
 
     <script>
+        // Logout function (global scope for navbar)
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
         const userId = localStorage.getItem('userId');
         const userType = localStorage.getItem('userType');
 
@@ -451,7 +444,7 @@
 
         async function loadFlightDetails() {
             try {
-                const response = await fetch(`../backend/api/company-flight-details.php?flight_id=${flightId}`);
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/company-flight-details.php?flight_id=${flightId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -505,7 +498,6 @@
         function displayPassengers(passengers, containerId, badgeId) {
             const container = document.getElementById(containerId);
             const badge = document.getElementById(badgeId);
-            
             badge.textContent = passengers.length;
 
             if (passengers.length === 0) {
@@ -523,6 +515,7 @@
                             <th>Amount Paid</th>
                             <th>Booking Date</th>
                             <th>Status</th>
+                            ${containerId === 'pendingPassengersContainer' ? '<th>Action</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>
@@ -531,7 +524,6 @@
             passengers.forEach(passenger => {
                 const paymentClass = passenger.payment_type === 'account' ? 'payment-account' : 'payment-cash';
                 const statusClass = `status-${passenger.status}`;
-                
                 tableHTML += `
                     <tr>
                         <td><i class="fas fa-user"></i> ${passenger.name}</td>
@@ -540,6 +532,7 @@
                         <td>$${parseFloat(passenger.amount_paid).toFixed(2)}</td>
                         <td>${new Date(passenger.booking_date).toLocaleDateString()}</td>
                         <td><span class="status-badge ${statusClass}">${passenger.status.toUpperCase()}</span></td>
+                        ${containerId === 'pendingPassengersContainer' ? `<td><button class="btn btn-success" onclick="acceptPassenger(${passenger.booking_id}, this)"><i class='fas fa-check'></i> Accept</button></td>` : ''}
                     </tr>
                 `;
             });
@@ -550,6 +543,31 @@
             `;
 
             container.innerHTML = tableHTML;
+        }
+
+        async function acceptPassenger(bookingId, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/bookings.php?action=accept', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: bookingId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Passenger registered successfully!', 'success');
+                    loadFlightDetails();
+                } else {
+                    showAlert(result.message || 'Failed to register passenger', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Accept';
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Accept';
+            }
         }
 
         function confirmCancelFlight() {

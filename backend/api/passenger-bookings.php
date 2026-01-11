@@ -33,7 +33,12 @@ try {
                 f.flight_code,
                 f.is_completed,
                 f.company_id,
-                u.name as company_name
+                f.max_passengers,
+                f.registered_passengers,
+                f.pending_passengers,
+                u.name as company_name,
+                (SELECT start_datetime FROM flight_itinerary WHERE flight_id = f.flight_id ORDER BY sequence_order ASC LIMIT 1) as departure_time,
+                (SELECT end_datetime FROM flight_itinerary WHERE flight_id = f.flight_id ORDER BY sequence_order DESC LIMIT 1) as arrival_time
               FROM bookings b
               INNER JOIN flights f ON b.flight_id = f.flight_id
               INNER JOIN users u ON f.company_id = u.user_id

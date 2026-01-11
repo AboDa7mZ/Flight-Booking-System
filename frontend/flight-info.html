@@ -486,7 +486,7 @@
                     <div class="payment-radio"></div>
                     <div class="payment-info">
                         <h3>Pay with Cash</h3>
-                        <p>Deal directly with the company (No online implementation)</p>
+                        <p>Deal directly with the company</p>
                     </div>
                     <i class="fas fa-money-bill-wave" style="font-size: 2rem; color: var(--secondary-color);"></i>
                 </div>
@@ -627,20 +627,35 @@
                 
                 // Process booking
                 try {
+                    const bookingData = {
+                        passenger_id: parseInt(userId),
+                        flight_id: parseInt(flightId),
+                        payment_type: 'account',
+                        amount_paid: parseFloat(price)
+                    };
+                    
+                    console.log('Booking request:', bookingData);
+                    
                     const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/bookings.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({
-                            passenger_id: userId,
-                            flight_id: flightId,
-                            payment_type: 'account',
-                            amount_paid: price
-                        })
+                        body: JSON.stringify(bookingData)
                     });
                     
-                    const data = await response.json();
+                    console.log('Response status:', response.status);
+                    const responseText = await response.text();
+                    console.log('Response text:', responseText);
+                    
+                    let data;
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('Failed to parse response:', e);
+                        alert('Server returned invalid response: ' + responseText);
+                        return;
+                    }
                     
                     if (data.success) {
                         // Fetch updated user data from server
@@ -666,7 +681,7 @@
                     }
                 } catch (error) {
                     console.error('Error booking flight:', error);
-                    alert('Error processing booking');
+                    alert('Error processing booking: ' + error.message);
                 }
             } else if (selectedPayment === 'cash') {
                 alert('Cash payment selected. Please contact the company directly to complete your booking.\n\nUse the "Message Company" button to communicate with them.');

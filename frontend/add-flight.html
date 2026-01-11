@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Flight - Flight Booking</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -105,9 +106,14 @@
 
         .stop-item {
             display: flex;
+            flex-wrap: wrap;
             gap: var(--spacing-md);
             align-items: center;
             margin-bottom: var(--spacing-md);
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
         }
 
         .stop-item input {
@@ -115,6 +121,11 @@
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
+        }
+        
+        .stop-item input[type="datetime-local"] {
+            flex: 1;
+            min-width: 200px;
         }
         
         .stop-item select {
@@ -231,22 +242,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-nav">
-            <div class="nav-brand">
-                <i class="fas fa-plane"></i>
-                <span>Flight Booking</span>
-            </div>
-            <div class="nav-links">
-                <a href="company-home.html">Dashboard</a>
-                <a href="add-flight.html" class="active">Add Flight</a>
-                <a href="company-messages.html">Messages</a>
-                <button onclick="logout()" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/company-navbar.html');</script>
 
     <div class="container">
         <a href="company-home.html" class="back-btn">
@@ -361,12 +359,25 @@
             
             const selectOptions = cities.map(city => `<option value="${city}">${city}</option>`).join('');
             
+            // Determine label based on position
+            let timeLabel = 'Time';
+            if (stopCount === 1) {
+                timeLabel = 'Departure Time';
+            } else if (stopCount === 2 && document.querySelectorAll('.stop-item').length === 1) {
+                timeLabel = 'Arrival Time';
+            }
+            
             stopItem.innerHTML = `
                 <div class="stop-number">${stopCount}</div>
-                <select required class="stop-city" data-sequence="${stopCount}">
+                <select required class="stop-city" data-sequence="${stopCount}" style="flex: 1; min-width: 150px;">
                     <option value="">Select city</option>
                     ${selectOptions}
                 </select>
+                <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column;">
+                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">${timeLabel}</label>
+                    <input type="datetime-local" required class="stop-time" data-sequence="${stopCount}" 
+                           style="width: 100%;">
+                </div>
                 ${stopCount > 2 ? `<button type="button" class="remove-stop" onclick="removeStop(${stopCount})">
                     <i class="fas fa-times"></i>
                 </button>` : ''}
@@ -427,12 +438,21 @@
             };
 
             // Collect route stops
-            const stopInputs = document.querySelectorAll('.stop-city');
-            stopInputs.forEach(input => {
-                if (input.value.trim()) {
+            const stopItems = document.querySelectorAll('.stop-item');
+            stopItems.forEach((stopItem, index) => {
+                const cityInput = stopItem.querySelector('.stop-city');
+                const timeInput = stopItem.querySelector('.stop-time');
+                
+                if (cityInput.value.trim() && timeInput.value) {
+                    const datetime = timeInput.value;
+                    // For first city, start and end are the same (departure)
+                    // For last city, start and end are the same (arrival)
+                    // For middle cities, start and end are the same (stopover time)
                     flightData.route.push({
-                        city: input.value.trim(),
-                        sequence_order: parseInt(input.getAttribute('data-sequence'))
+                        city: cityInput.value.trim(),
+                        sequence_order: parseInt(cityInput.getAttribute('data-sequence')),
+                        start_datetime: datetime,
+                        end_datetime: datetime
                     });
                 }
             });
@@ -446,7 +466,7 @@
             }
 
             try {
-                const response = await fetch('../backend/api/add-flight.php', {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/add-flight.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

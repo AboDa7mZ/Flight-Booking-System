@@ -290,7 +290,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-comments"></i> Messages</h2>
-                <a href="passenger-home.html" class="back-link">
+                <a href="#" class="back-link" id="backLink">
                     <i class="fas fa-arrow-left"></i> Back to Home
                 </a>
             </div>
@@ -339,6 +339,14 @@
             window.location.href = 'login.html';
         }
         
+        // Set the back link based on user type
+        const backLink = document.getElementById('backLink');
+        if (userType === 'company') {
+            backLink.href = 'company-home.html';
+        } else {
+            backLink.href = 'passenger-home.html';
+        }
+        
         let currentCompanyId = null;
         let currentCompanyName = null;
         
@@ -361,24 +369,71 @@
                 
                 if (data.success && data.conversations && data.conversations.length > 0) {
                     displayConversations(data.conversations);
+                } else {
+                    // No conversations yet, show available companies to message
+                    if (userType === 'passenger') {
+                        loadAvailableCompanies();
+                    }
                 }
             } catch (error) {
                 console.error('Error loading conversations:', error);
+                if (userType === 'passenger') {
+                    loadAvailableCompanies();
+                }
             }
+        }
+        
+        // Load available companies for passengers to start conversations
+        async function loadAvailableCompanies() {
+            try {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-companies.php`);
+                const data = await response.json();
+                
+                if (data.success && data.companies && data.companies.length > 0) {
+                    displayAvailableCompanies(data.companies);
+                }
+            } catch (error) {
+                console.error('Error loading companies:', error);
+            }
+        }
+        
+        function displayAvailableCompanies(companies) {
+            const list = document.getElementById('conversationsList');
+            list.innerHTML = `
+                <div style="padding: 1rem 1.5rem; color: #666; font-size: 0.875rem; border-bottom: 1px solid var(--light-color);">
+                    <i class="fas fa-info-circle"></i> Select a company to start messaging
+                </div>
+            ` + companies.map(company => `
+                <div class="conversation-item ${company.user_id == currentCompanyId ? 'active' : ''}" 
+                     onclick="openChat('${company.user_id}', '${company.name}')">
+                    <div class="conversation-avatar">${company.name.charAt(0).toUpperCase()}</div>
+                    <div class="conversation-info">
+                        <h3>${company.name}</h3>
+                        <p style="color: #999; font-size: 0.875rem;">Airline Company</p>
+                    </div>
+                </div>
+            `).join('');
         }
         
         function displayConversations(conversations) {
             const list = document.getElementById('conversationsList');
-            list.innerHTML = conversations.map(conv => `
-                <div class="conversation-item ${conv.company_id == currentCompanyId ? 'active' : ''}" 
-                     onclick="openChat('${conv.company_id}', '${conv.company_name}')">
-                    <div class="conversation-avatar">${conv.company_name.charAt(0).toUpperCase()}</div>
-                    <div class="conversation-info">
-                        <h3>${conv.company_name}</h3>
-                        <p>${conv.last_message || 'No messages yet'}</p>
+            list.innerHTML = conversations.map(conv => {
+                // Handle both passenger and company views
+                const otherId = conv.company_id || conv.passenger_id;
+                const otherName = conv.company_name || conv.passenger_name;
+                const isActive = otherId == currentCompanyId;
+                
+                return `
+                    <div class="conversation-item ${isActive ? 'active' : ''}" 
+                         onclick="openChat('${otherId}', '${otherName}')">
+                        <div class="conversation-avatar">${otherName.charAt(0).toUpperCase()}</div>
+                        <div class="conversation-info">
+                            <h3>${otherName}</h3>
+                            <p>${conv.last_message || 'No messages yet'}</p>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function openChat(companyId, companyName) {

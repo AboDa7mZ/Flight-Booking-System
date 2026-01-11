@@ -409,6 +409,89 @@
             margin-bottom: var(--spacing-sm);
         }
         
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-xl);
+            border-bottom: 2px solid var(--color-gray-200);
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: var(--text-2xl);
+            color: var(--color-gray-900);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--color-gray-600);
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .close-btn:hover {
+            background: var(--color-gray-100);
+            color: var(--color-gray-900);
+        }
+        
+        .detail-row {
+            display: flex;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--color-gray-700);
+            width: 150px;
+            flex-shrink: 0;
+        }
+        
+        .detail-value {
+            color: var(--color-gray-900);
+            flex: 1;
+        }
+        
         @media (max-width: 768px) {
             .user-profile {
                 flex-direction: column;
@@ -426,28 +509,27 @@
             .flight-details {
                 grid-template-columns: 1fr;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .detail-label {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="passenger-home.html" class="logo">
-                <i class="fas fa-plane-departure"></i>
-                <span>Flight Booking</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="passenger-home.html" class="active">Dashboard</a></li>
-                <li><a href="search-flights.html">Search Flights</a></li>
-                <li><a href="passenger-profile.html">Profile</a></li>
-            </ul>
-            <div class="nav-actions">
-                <button class="btn btn-text" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/passenger-navbar.html');</script>
     
     <div class="dashboard">
         <div class="dashboard-header">
@@ -504,7 +586,7 @@
                         <div class="stat-icon success">
                             <i class="fas fa-plane"></i>
                         </div>
-                        <div class="stat-value" id="upcomingFlights">0</div>
+                        <div class="stat-value" id="upcomingFlightsCount">0</div>
                         <div class="stat-label">Upcoming Flights</div>
                     </div>
                     
@@ -559,6 +641,19 @@
         </div>
     </div>
     
+    <!-- Flight Details Modal -->
+    <div id="detailsModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Flight Details</h2>
+                <button class="close-btn" onclick="closeDetailsModal()">&times;</button>
+            </div>
+            <div id="modalContent" style="padding: 20px;">
+                <!-- Content will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Check authentication
         const userId = localStorage.getItem('userId');
@@ -597,7 +692,7 @@
         async function loadUserProfile() {
             try {
                 const timestamp = new Date().getTime();
-                const response = await fetch(`backend/api/get-profile.php?user_id=${userId}&_=${timestamp}`, {
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}&_=${timestamp}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache',
@@ -617,11 +712,6 @@
             }
         }
         
-        // Logout function
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
         
         // Switch tabs
         function switchTab(tabName) {
@@ -708,8 +798,8 @@
                                 <i class="fas fa-plane"></i>
                             </div>
                             <div class="flight-info">
-                                <h3>${flight.flight_name}</h3>
-                                <span class="flight-code">${flight.flight_code || 'N/A'}</span>
+                                <h3>${flight.flight_name} - ${flight.flight_code || 'N/A'}</h3>
+                                <span class="flight-code" style="font-size: 12px; color: #666;">ID: ${flight.flight_id}</span>
                             </div>
                         </div>
                         <span class="status-badge status-${flight.status}">
@@ -720,29 +810,45 @@
                     <div class="flight-details">
                         <div class="detail-item">
                             <i class="fas fa-route"></i>
-                            <span>${flight.route || 'Route not available'}</span>
+                            <span><strong>Itinerary:</strong> ${flight.route || 'Route not available'}</span>
                         </div>
                         <div class="detail-item">
-                            <i class="fas fa-calendar"></i>
-                            <span>${new Date(flight.booking_date).toLocaleDateString()}</span>
+                            <i class="fas fa-users"></i>
+                            <span><strong>Passengers:</strong> ${flight.registered_passengers || 0} registered, ${flight.pending_passengers || 0} pending (${flight.max_passengers || 0} max)</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-money-bill-wave"></i>
-                            <strong>$${parseFloat(flight.amount_paid || 0).toFixed(2)}</strong>
+                            <span><strong>Fees:</strong> $${parseFloat(flight.amount_paid || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Departure:</strong> ${flight.departure_time ? new Date(flight.departure_time).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Arrival:</strong> ${flight.arrival_time ? new Date(flight.arrival_time).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-${flight.is_completed ? 'check-circle' : 'hourglass-half'}"></i>
+                            <span><strong>Status:</strong> ${flight.is_completed ? 'Completed' : 'In Progress'}</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-credit-card"></i>
-                            <span>${flight.payment_type || 'N/A'}</span>
+                            <span><strong>Payment:</strong> ${flight.payment_type === 'account' ? 'Account Balance' : 'Cash'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-building"></i>
+                            <span><strong>Airline:</strong> ${flight.company_name || 'N/A'}</span>
                         </div>
                     </div>
                     
                     <div class="flight-actions">
                         <button class="btn btn-primary btn-sm" onclick="viewBookingDetails(${flight.booking_id})">
-                            <i class="fas fa-eye"></i> View Details
+                            <i class="fas fa-eye"></i> View Full Details
                         </button>
                         ${flight.status === 'pending' ? `
                             <button class="btn btn-secondary btn-sm" onclick="cancelBooking(${flight.booking_id})">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-times"></i> Cancel Booking
                             </button>
                         ` : ''}
                     </div>
@@ -772,25 +878,52 @@
                                 <i class="fas fa-check"></i>
                             </div>
                             <div class="flight-info">
-                                <h3>${flight.flight_name}</h3>
-                                <span class="flight-code">${flight.flight_code || 'N/A'}</span>
+                                <h3>${flight.flight_name} - ${flight.flight_code || 'N/A'}</h3>
+                                <span class="flight-code" style="font-size: 12px; color: #666;">ID: ${flight.flight_id}</span>
                             </div>
                         </div>
+                        <span class="status-badge" style="background: var(--secondary-color);">Completed</span>
                     </div>
                     
                     <div class="flight-details">
                         <div class="detail-item">
                             <i class="fas fa-route"></i>
-                            <span>${flight.route || 'Route not available'}</span>
+                            <span><strong>Itinerary:</strong> ${flight.route || 'Route not available'}</span>
                         </div>
                         <div class="detail-item">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Completed: ${new Date(flight.booking_date).toLocaleDateString()}</span>
+                            <i class="fas fa-users"></i>
+                            <span><strong>Passengers:</strong> ${flight.registered_passengers || 0} registered, ${flight.pending_passengers || 0} pending (${flight.max_passengers || 0} max)</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-money-bill-wave"></i>
-                            <strong>$${parseFloat(flight.amount_paid || 0).toFixed(2)}</strong>
+                            <span><strong>Fees:</strong> $${parseFloat(flight.amount_paid || 0).toFixed(2)}</span>
                         </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Departure:</strong> ${flight.departure_time ? new Date(flight.departure_time).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Arrival:</strong> ${flight.arrival_time ? new Date(flight.arrival_time).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-check"></i>
+                            <span><strong>Booking Date:</strong> ${new Date(flight.booking_date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span><strong>Payment:</strong> ${flight.payment_type === 'account' ? 'Account Balance' : 'Cash'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-building"></i>
+                            <span><strong>Airline:</strong> ${flight.company_name || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-actions">
+                        <button class="btn btn-primary btn-sm" onclick="viewBookingDetails(${flight.booking_id})">
+                            <i class="fas fa-eye"></i> View Full Details
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -818,8 +951,8 @@
                                 <i class="fas fa-times"></i>
                             </div>
                             <div class="flight-info">
-                                <h3>${flight.flight_name}</h3>
-                                <span class="flight-code">${flight.flight_code || 'N/A'}</span>
+                                <h3>${flight.flight_name} - ${flight.flight_code || 'N/A'}</h3>
+                                <span class="flight-code" style="font-size: 12px; color: #666;">ID: ${flight.flight_id}</span>
                             </div>
                         </div>
                         <span class="status-badge status-cancelled">Cancelled</span>
@@ -828,12 +961,42 @@
                     <div class="flight-details">
                         <div class="detail-item">
                             <i class="fas fa-route"></i>
-                            <span>${flight.route || 'Route not available'}</span>
+                            <span><strong>Itinerary:</strong> ${flight.route || 'Route not available'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-users"></i>
+                            <span><strong>Passengers:</strong> ${flight.registered_passengers || 0} registered, ${flight.pending_passengers || 0} pending (${flight.max_passengers || 0} max)</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span><strong>Refunded:</strong> $${parseFloat(flight.amount_paid || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Departure:</strong> ${flight.departure_time ? new Date(flight.departure_time).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span><strong>Arrival:</strong> ${flight.arrival_time ? new Date(flight.arrival_time).toLocaleString() : 'N/A'}</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-calendar-times"></i>
-                            <span>Cancelled: ${new Date(flight.booking_date).toLocaleDateString()}</span>
+                            <span><strong>Booking Date:</strong> ${new Date(flight.booking_date).toLocaleDateString()}</span>
                         </div>
+                        <div class="detail-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span><strong>Payment:</strong> ${flight.payment_type === 'account' ? 'Account Balance' : 'Cash'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-building"></i>
+                            <span><strong>Airline:</strong> ${flight.company_name || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-actions">
+                        <button class="btn btn-primary btn-sm" onclick="viewBookingDetails(${flight.booking_id})">
+                            <i class="fas fa-eye"></i> View Full Details
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -872,22 +1035,147 @@
         function updateStats(bookings) {
             const total = bookings.length;
             const upcoming = bookings.filter(b => b.status !== 'cancelled' && !b.is_completed).length;
-            const totalSpent = bookings.reduce((sum, b) => sum + parseFloat(b.amount_paid || 0), 0);
+            // Only count non-cancelled bookings for total spent
+            const totalSpent = bookings
+                .filter(b => b.status !== 'cancelled')
+                .reduce((sum, b) => sum + parseFloat(b.amount_paid || 0), 0);
             
             document.getElementById('totalBookings').textContent = total;
-            document.getElementById('upcomingFlights').textContent = upcoming;
+            document.getElementById('upcomingFlightsCount').textContent = upcoming;
             document.getElementById('totalSpent').textContent = '$' + totalSpent.toFixed(2);
         }
         
-        function viewBookingDetails(bookingId) {
-            alert('Viewing booking details for ID: ' + bookingId);
+        async function viewBookingDetails(bookingId) {
+            const booking = allBookings.find(b => b.booking_id === bookingId);
+            if (!booking) {
+                alert('Booking not found');
+                return;
+            }
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 15px;">
+                        <i class="fas fa-plane"></i> ${booking.flight_name}
+                    </h3>
+                    <span class="status-badge status-${booking.status}" style="font-size: 14px; padding: 8px 16px;">
+                        ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                    </span>
+                </div>
+                
+                <div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-ticket-alt"></i> Flight Code</div>
+                        <div class="detail-value"><strong>${booking.flight_code || 'N/A'}</strong></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-route"></i> Route</div>
+                        <div class="detail-value">${booking.route || 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-calendar"></i> Booking Date</div>
+                        <div class="detail-value">${new Date(booking.booking_date).toLocaleString()}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-clock"></i> Departure Time</div>
+                        <div class="detail-value">${booking.departure_time || 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-clock"></i> Arrival Time</div>
+                        <div class="detail-value">${booking.arrival_time || 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-users"></i> Passengers</div>
+                        <div class="detail-value">${booking.registered_passengers || 0} / ${booking.max_passengers || 0}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-money-bill-wave"></i> Amount Paid</div>
+                        <div class="detail-value"><strong style="color: var(--secondary-color); font-size: 18px;">$${parseFloat(booking.amount_paid || 0).toFixed(2)}</strong></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-credit-card"></i> Payment Method</div>
+                        <div class="detail-value">${booking.payment_type === 'account' ? 'Account Balance' : 'Cash'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-building"></i> Airline</div>
+                        <div class="detail-value">${booking.company_name || 'N/A'}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--color-gray-200); display: flex; gap: 10px; justify-content: flex-end;">
+                    ${booking.status === 'pending' ? `
+                        <button class="btn btn-secondary" onclick="cancelBookingFromModal(${booking.booking_id})">
+                            <i class="fas fa-times"></i> Cancel Booking
+                        </button>
+                    ` : ''}
+                    <button class="btn btn-primary" onclick="closeDetailsModal()">
+                        <i class="fas fa-check"></i> Close
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('detailsModal').style.display = 'flex';
         }
         
-        function cancelBooking(bookingId) {
-            if (confirm('Are you sure you want to cancel this booking?')) {
-                alert('Cancellation feature coming soon! Booking ID: ' + bookingId);
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+        
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/cancel-booking.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        booking_id: parseInt(bookingId),
+                        user_id: parseInt(userId)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Booking cancelled successfully! Your refund has been processed.');
+                    // Reload bookings
+                    await loadBookings();
+                    // Update balance
+                    if (data.new_balance) {
+                        localStorage.setItem('accountBalance', data.new_balance);
+                        document.getElementById('accountBalance').textContent = parseFloat(data.new_balance).toFixed(2);
+                    }
+                } else {
+                    alert('Failed to cancel booking: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error cancelling booking:', error);
+                alert('Error cancelling booking. Please try again.');
             }
         }
+        
+        async function cancelBookingFromModal(bookingId) {
+            closeDetailsModal();
+            await cancelBooking(bookingId);
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target === modal) {
+                closeDetailsModal();
+            }
+        });
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
  * Handles all backend communication
  */
 
-const API_BASE_URL = 'http://localhost/Flight%20Booking%20Website/backend/api';
+const API_BASE_URL = 'http://localhost/Flight-Booking-Website/backend/api';
 
 // API Helper Function
 async function apiRequest(endpoint, options = {}) {

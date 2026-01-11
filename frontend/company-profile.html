@@ -384,23 +384,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-nav">
-            <div class="nav-brand">
-                <i class="fas fa-plane"></i>
-                <span>Flight Booking</span>
-            </div>
-            <div class="nav-links">
-                <a href="company-home.html">Dashboard</a>
-                <a href="add-flight.html">Add Flight</a>
-                <a href="company-messages.html">Messages</a>
-                <a href="company-profile.html" class="active">Profile</a>
-                <button onclick="logout()" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/company-navbar.html');</script>
 
     <div class="container">
         <div id="alertBox" class="alert"></div>
@@ -524,7 +510,7 @@
 
         async function loadProfile() {
             try {
-                const response = await fetch(`../backend/api/get-profile.php?user_id=${userId}`);
+                const response = await fetch(`http://localhost/Flight-Booking-Website/backend/api/get-profile.php?user_id=${userId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -545,8 +531,16 @@
             document.getElementById('companyEmail').textContent = user.email || '';
             
             // Display logo if exists
-            if (user.logo) {
-                document.getElementById('logoDisplay').innerHTML = `<img src="${user.logo}" alt="Company Logo">`;
+            if (user.logo_img) {
+                const logoUrl = user.logo_img.startsWith('http') ? user.logo_img : `http://localhost/Flight-Booking-Website/${user.logo_img}`;
+                const img = new Image();
+                img.onload = function() {
+                    document.getElementById('logoDisplay').innerHTML = `<img src="${logoUrl}" alt="Company Logo">`;
+                };
+                img.onerror = function() {
+                    console.log('Logo not found, using default icon');
+                };
+                img.src = logoUrl;
             }
             
             // Display bio
@@ -662,7 +656,7 @@
             }
 
             try {
-                const response = await fetch('../backend/api/update-profile.php', {
+                const response = await fetch('http://localhost/Flight-Booking-Website/backend/api/update-profile.php', {
                     method: 'POST',
                     body: formData
                 });

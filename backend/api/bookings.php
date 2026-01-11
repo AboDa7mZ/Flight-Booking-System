@@ -6,7 +6,14 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT");
+header("Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 include_once '../config/database.php';
 include_once '../models/Booking.php';
@@ -108,6 +115,13 @@ else if($method == "POST") {
             if($stmt->execute()) {
                 $booking_id = $db->lastInsertId();
                 
+                // Get flight details including company_id
+                $flightQuery = "SELECT company_id, fees FROM flights WHERE flight_id = :flight_id";
+                $flightStmt = $db->prepare($flightQuery);
+                $flightStmt->bindParam(':flight_id', $data->flight_id);
+                $flightStmt->execute();
+                $flight = $flightStmt->fetch(PDO::FETCH_ASSOC);
+                
                 // Update flight pending passengers count
                 $updateQuery = "UPDATE flights 
                                SET pending_passengers = pending_passengers + 1 
@@ -116,7 +130,7 @@ else if($method == "POST") {
                 $updateStmt->bindParam(':flight_id', $data->flight_id);
                 $updateStmt->execute();
                 
-                // If payment from account, deduct balance
+                // If payment from account, deduct balance from passenger
                 if($data->payment_type === 'account') {
                     $balanceQuery = "UPDATE users 
                                     SET account_balance = account_balance - :amount 
@@ -125,6 +139,17 @@ else if($method == "POST") {
                     $balanceStmt->bindParam(':amount', $data->amount_paid);
                     $balanceStmt->bindParam(':user_id', $data->passenger_id);
                     $balanceStmt->execute();
+                }
+                
+                // Add money to company's account
+                if($flight && isset($flight['company_id'])) {
+                    $companyBalanceQuery = "UPDATE users 
+                                           SET account_balance = account_balance + :amount 
+                                           WHERE user_id = :company_id";
+                    $companyBalanceStmt = $db->prepare($companyBalanceQuery);
+                    $companyBalanceStmt->bindParam(':amount', $data->amount_paid);
+                    $companyBalanceStmt->bindParam(':company_id', $flight['company_id']);
+                    $companyBalanceStmt->execute();
                 }
                 
                 $db->commit();
@@ -190,6 +215,35 @@ else if($method == "PUT") {
         } else {
             http_response_code(400);
             echo json_encode(array("message" => "Missing required data."));
+        }
+    }
+    
+    // ACCEPT PENDING PASSENGER
+    else if(isset($_GET['action']) && $_GET['action'] == 'accept') {
+        if(!empty($data->booking_id)) {
+            // Update booking status to registered
+            $updateQuery = "UPDATE bookings SET status = 'registered' WHERE booking_id = :booking_id AND status = 'pending'";
+            $updateStmt = $db->prepare($updateQuery);
+            $updateStmt->bindParam(':booking_id', $data->booking_id);
+            if($updateStmt->execute() && $updateStmt->rowCount() > 0) {
+                // Update flight counts
+                $flightUpdate = "UPDATE flights f
+                                 JOIN bookings b ON f.flight_id = b.flight_id
+                                 SET f.pending_passengers = f.pending_passengers - 1,
+                                     f.registered_passengers = f.registered_passengers + 1
+                                 WHERE b.booking_id = :booking_id";
+                $flightStmt = $db->prepare($flightUpdate);
+                $flightStmt->bindParam(':booking_id', $data->booking_id);
+                $flightStmt->execute();
+                http_response_code(200);
+                echo json_encode(array("success" => true, "message" => "Passenger registered successfully."));
+            } else {
+                http_response_code(400);
+                echo json_encode(array("success" => false, "message" => "Unable to register passenger. Maybe already registered?"));
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(array("success" => false, "message" => "Missing booking_id."));
         }
     }
     

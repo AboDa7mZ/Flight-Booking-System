@@ -45,7 +45,6 @@
         }
         
         .dashboard {
-            padding-top: 80px;
             min-height: 100vh;
             background: var(--color-gray-50);
         }
@@ -387,25 +386,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="company-home.html" class="logo">
-                <i class="fas fa-plane-departure"></i>
-                <span>Flight Booking</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="company-home.html" class="active">Dashboard</a></li>
-                <li><a href="add-flight.html">My Flights</a></li>
-                <li><a href="company-messages.html">Messages</a></li>
-                <li><a href="company-profile.html">Profile</a></li>
-            </ul>
-            <div class="nav-actions">
-                <button class="btn btn-text" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/company-navbar.html');</script>
     
     <div class="dashboard">
         <div class="dashboard-header">
@@ -517,6 +500,12 @@
     </div>
     
     <script>
+        // Logout function (global scope for navbar)
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
         // Check authentication
         const userId = localStorage.getItem('userId');
         const userType = localStorage.getItem('userType');
@@ -540,8 +529,11 @@
         // Display company info
         function displayCompanyInfo() {
             document.getElementById('companyName').textContent = userName || 'Company';
-            document.getElementById('accountBalance').textContent = parseFloat(accountBalance || 0).toFixed(2);
-            
+            // Get total revenue value
+            const totalRevenue = parseFloat(document.getElementById('totalRevenue')?.textContent?.replace('$','') || 0);
+            const balance = parseFloat(accountBalance || 0);
+            // Show sum of account balance and total revenue
+            document.getElementById('accountBalance').textContent = (balance + totalRevenue).toFixed(2);
             // Set company avatar
             const avatar = document.getElementById('companyAvatar');
             if (userName) {
@@ -549,11 +541,6 @@
             }
         }
         
-        // Logout function
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
         
         // Load company flights
         async function loadFlights() {

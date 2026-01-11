@@ -1,13 +1,27 @@
 <?php
-header('Content-Type: application/json');
+// Enable error logging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// CORS headers must be first
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Max-Age: 86400');
+header('Content-Type: application/json');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
 }
 
@@ -86,16 +100,27 @@ try {
     $flight_id = $db->lastInsertId();
     
     // Insert route stops
-    $insert_stop = "INSERT INTO flight_itinerary (flight_id, city, sequence_order) VALUES (:flight_id, :city, :sequence_order)";
+    $insert_stop = "INSERT INTO flight_itinerary (flight_id, city, sequence_order, start_datetime, end_datetime) 
+                    VALUES (:flight_id, :city, :sequence_order, :start_datetime, :end_datetime)";
     $stop_stmt = $db->prepare($insert_stop);
     
     foreach ($route as $stop) {
+        if (!isset($stop['start_datetime']) || !isset($stop['end_datetime'])) {
+            $db->rollBack();
+            echo json_encode(['success' => false, 'message' => 'Missing datetime for route stops']);
+            exit;
+        }
+        
         $city = trim($stop['city']);
         $sequence = intval($stop['sequence_order']);
+        $start_datetime = $stop['start_datetime'];
+        $end_datetime = $stop['end_datetime'];
         
         $stop_stmt->bindParam(':flight_id', $flight_id);
         $stop_stmt->bindParam(':city', $city);
         $stop_stmt->bindParam(':sequence_order', $sequence);
+        $stop_stmt->bindParam(':start_datetime', $start_datetime);
+        $stop_stmt->bindParam(':end_datetime', $end_datetime);
         $stop_stmt->execute();
     }
     

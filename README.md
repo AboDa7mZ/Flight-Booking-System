@@ -1,340 +1,476 @@
-# SkyVoyage Flight Booking Website
+# Flight Booking System
 
-A premium, full-featured flight booking platform built with PHP backend and modern frontend technologies.
+A comprehensive web-based flight booking platform that allows passengers to search and book flights, and airline companies to manage their flight operations.
 
-## 🚀 Features
+## 📋 Table of Contents
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Database Setup](#database-setup)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
 
-### User Features
-- **Flight Search**: Advanced search with multiple filters (origin, destination, dates, class, passengers)
-- **User Authentication**: Secure registration and login system
-- **Booking Management**: Create, view, and cancel flight bookings
-- **Payment Integration**: Secure payment processing (Stripe ready)
-- **User Dashboard**: View booking history and manage profile
-- **Flight Reviews**: Rate and review flights
-- **Promotional Codes**: Apply discount codes to bookings
-- **Email Notifications**: Booking confirmations and updates
+## Features
 
-### Admin Features
-- **Flight Management**: Add, edit, and delete flights
-- **Booking Oversight**: View and manage all bookings
-- **User Management**: Manage user accounts
-- **Revenue Reports**: View booking statistics and revenue
-- **Airport & Airline Management**: Manage airport and airline data
+### For Passengers
+- Search and book flights
+- View booking history
+- Manage profile
+- Check account balance
+- Send messages to airline companies
+- Cancel bookings
 
-### Technical Features
-- **RESTful API Architecture**: Clean API endpoints for all operations
-- **Database Transactions**: Safe booking process with rollback capability
-- **Stored Procedures**: Optimized database operations
-- **Triggers**: Automatic updates for seat availability and booking status
-- **Database Views**: Pre-computed reports for better performance
-- **Session Management**: Secure token-based authentication
-- **Responsive Design**: Mobile-first, fully responsive UI
+### For Companies
+- Add and manage flights
+- View flight details and passenger bookings
+- Manage company profile
+- Handle customer messages
+- Cancel flights
+
+## Technology Stack
+
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+- **Backend**: PHP 7.4+
+- **Database**: MySQL/MariaDB
+- **Architecture**: REST API
+
+## Project Structure
+
+```
+flight-booking-website/
+├── backend/
+│   ├── api/              # API endpoints
+│   │   ├── auth.php              # User authentication
+│   │   ├── register.php          # User registration
+│   │   ├── flights.php           # Flight search & listing
+│   │   ├── search-flights.php    # Advanced flight search
+│   │   ├── add-flight.php        # Add new flights (Company)
+│   │   ├── cancel-flight.php     # Cancel flights (Company)
+│   │   ├── company-flights.php    # Company flight management
+│   │   ├── company-flight-details.php
+│   │   ├── bookings.php          # Create bookings
+│   │   ├── passenger-bookings.php # View passenger bookings
+│   │   ├── cancel-booking.php     # Cancel bookings
+│   │   ├── messages.php            # Messaging system
+│   │   ├── get-profile.php         # Get user profile
+│   │   ├── update-profile.php      # Update user profile
+│   │   ├── change-password.php     # Change password
+│   │   ├── get-cities.php          # Get cities
+│   │   ├── get-companies.php        # Get airline companies
+│   │   └── airports.php             # Airports data
+│   │
+│   ├── config/
+│   │   ├── config.php              # Configuration settings
+│   │   └── database.php            # Database connection
+│   │
+│   └── models/
+│       ├── Booking.php             # Booking model
+│       ├── Flight.php              # Flight model
+│       └── User.php                # User model
+│
+├── database/
+│   └── flight_booking.sql         # Main database schema
+│
+└── frontend/
+    ├── *.html                      # Various HTML pages
+    ├── components/                 # Reusable UI components
+    │   ├── company-navbar.html
+    │   └── passenger-navbar.html
+    ├── css/
+    │   └── style.css              # Main stylesheet
+    └── js/
+        ├── api.js                  # API integration
+        ├── main.js                 # UI interactions
+        └── navbar-loader.js        # Navigation component loader
+```
+
+## Features
+
+### User Types
+- **Passengers**: Can search and book flights, manage their bookings, view profile and balance
+- **Companies**: Can manage flights (add/cancel), view bookings, and access company-specific features
+
+### Core Functionality
+- **User Authentication**: Login, registration, and profile management
+- **Flight Search**: Search flights by origin, destination, date, and number of passengers
+- **Flight Booking**: Book flights with seat selection and payment processing
+- **Company Management**: Airlines can add flights, view bookings, and manage their flight schedules
+- **Passenger Features**: View bookings, manage profile, search and book flights
+- **Messaging System**: Communication between companies and passengers
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **HTML5, CSS3, JavaScript**
+- Pure vanilla JavaScript (no frameworks)
+- Responsive design with mobile support
+- Font Awesome icons
+
+### Backend
+- **PHP 7.4+**
+- RESTful API architecture
+- PDO for database operations
+- Password hashing with bcrypt
+
+### Database
+- **MySQL/MariaDB**
+- Normalized database schema
+- Stored procedures and views for complex queries
 
 ## 📁 Project Structure
 
 ```
-Flight Booking Website/
+Flight-Booking-System/
+├── frontend/                  # Client-side files
+│   ├── index.html            # Landing page
+│   ├── login.html            # User login
+│   ├── register.html         # User registration
+│   ├── passenger-home.html   # Passenger dashboard
+│   ├── passenger-profile.html
+│   ├── company-home.html      # Company dashboard
+│   ├── company-profile.html
+│   ├── search-flights.html
+│   ├── search-results.html
+│   ├── booking.html
+│   ├── flight-info.html
+│   ├── add-flight.html
+│   ├── company-flight-details.html
+│   ├── company-messages.html
+│   ├── messages.html
+│   ├── components/
+│   │   ├── company-navbar.html
+│   │   └── passenger-navbar.html
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       ├── api.js
+│       ├── main.js
+│       └── navbar-loader.js
+│
 ├── backend/
 │   ├── api/
-│   │   ├── auth.php              # Authentication endpoints
-│   │   ├── flights.php           # Flight search and management
-│   │   ├── bookings.php          # Booking operations
-│   │   └── airports.php          # Airport data
+│   │   ├── add-flight.php
+│   │   ├── airports.php
+│   │   ├── auth.php
+│   │   ├── bookings.php
+│   │   ├── cancel-booking.php
+│   │   ├── cancel-flight.php
+│   │   ├── change-password.php
+│   │   ├── company-flight-details.php
+│   │   ├── company-flights.php
+│   │   ├── flights.php
+│   │   ├── get-cities.php
+│   │   ├── get-companies.php
+│   │   ├── get-profile.php
+│   │   ├── messages.php
+│   │   ├── passenger-bookings.php
+│   │   ├── register.php
+│   │   ├── search-flights.php
+│   │   └── update-profile.php
 │   ├── config/
-│   │   ├── database.php          # Database connection
-│   │   └── config.php            # App configuration
+│   │   ├── config.php
+│   │   └── database.php
 │   └── models/
-│       ├── User.php              # User model
-│       ├── Flight.php            # Flight model
-│       └── Booking.php           # Booking model
+│       ├── Booking.php
+│       ├── Flight.php
+│       └── User.php
+├── database/
+│   └── flight_booking.sql
 ├── frontend/
+│   ├── add-flight.html
+│   ├── booking.html
+│   ├── company-flight-details.html
+│   ├── company-home.html
+│   ├── company-messages.html
+│   ├── company-profile.html
+│   ├── flight-info.html
+│   ├── index.html
+│   ├── login.html
+│   ├── messages.html
+│   ├── passenger-home.html
+│   ├── passenger-profile.html
+│   ├── register.html
+│   ├── search-flights.html
+│   ├── search-results.html
+│   ├── booking.html
+│   ├── components/
+│   │   ├── company-navbar.html
+│   │   └── passenger-navbar.html
 │   ├── css/
-│   │   └── style.css             # Premium styling
-│   ├── js/
-│   │   ├── main.js               # UI interactions
-│   │   └── api.js                # API integration
-│   ├── index.html                # Landing page
-│   ├── login.html                # Login page
-│   ├── register.html             # Registration page
-│   └── search-results.html       # Flight results
-└── database/
-    └── flight_booking.sql        # Database schema
+│   │   └── style.css
+│   └── js/
+│       ├── api.js
+│       ├── main.js
+│       └── navbar-loader.js
+├── database/
+│   └── flight_booking.sql
+└── README.md
 ```
 
-## 🛠️ Installation
+## Features
+
+### For Passengers
+- **User Registration & Authentication**: Secure account creation and login system
+- **Flight Search**: Search flights by origin, destination, and dates
+- **Booking Management**: Book flights, view bookings, and cancel reservations
+- **Profile Management**: Update personal information and account settings
+- **Account Balance**: Manage wallet balance for bookings
+- **Messaging**: Communicate with airline companies
+
+### For Airline Companies
+- **Company Dashboard**: Manage flights and view statistics
+- **Flight Management**: Add, update, and cancel flights
+- **Booking Overview**: View all bookings for company flights
+- **Company Profile**: Update company information
+- **Messaging**: Communicate with passengers
+
+## Technology Stack
+
+### Frontend
+- **HTML5**: Semantic markup and structure
+- **CSS3**: Modern styling with responsive design
+- **JavaScript (ES6+)**: Interactive UI and API integration
+- **Font Awesome**: Icon library
+
+### Backend
+- **PHP 7.4+**: Server-side logic
+- **MySQL/MariaDB**: Database management
+- **PDO**: Database abstraction layer
+- **RESTful API**: Clean API architecture
+
+## Project Structure
+
+```
+Flight-Booking-Website/
+├── frontend/                 # Frontend files
+│   ├── index.html           # Landing page
+│   ├── login.html           # Login page
+│   ├── register.html        # Registration page
+│   ├── passenger-home.html  # Passenger dashboard
+│   ├── company-home.html    # Company dashboard
+│   ├── search-flights.html  # Flight search interface
+│   ├── search-results.html  # Search results display
+│   ├── booking.html         # Booking confirmation
+│   ├── flight-info.html     # Flight details
+│   ├── add-flight.html      # Add new flight (company)
+│   ├── company-flight-details.html  # Flight management
+│   ├── passenger-profile.html       # Passenger profile
+│   ├── company-profile.html         # Company profile
+│   ├── messages.html        # Passenger messaging
+│   ├── company-messages.html        # Company messaging
+│   ├── components/          # Reusable components
+│   │   ├── passenger-navbar.html
+│   │   └── company-navbar.html
+│   ├── css/
+│   │   └── style.css        # Main stylesheet
+│   └── js/
+│       ├── api.js           # API integration
+│       ├── main.js          # UI interactions
+│       └── navbar-loader.js # Navigation component loader
+│
+├── backend/                 # Backend files
+│   ├── api/                 # API endpoints
+│   │   ├── auth.php         # Authentication API
+│   │   ├── register.php     # User registration
+│   │   ├── flights.php      # Flight operations
+│   │   ├── search-flights.php       # Flight search
+│   │   ├── bookings.php     # Booking operations
+│   │   ├── passenger-bookings.php   # Passenger bookings
+│   │   ├── cancel-booking.php       # Cancel bookings
+│   │   ├── add-flight.php   # Add new flights
+│   │   ├── company-flights.php      # Company flight list
+│   │   ├── company-flight-details.php  # Flight details
+│   │   ├── cancel-flight.php        # Cancel flights
+│   │   ├── airports.php     # Airport data
+│   │   ├── get-cities.php   # City data
+│   │   ├── get-companies.php        # Company data
+│   │   ├── get-profile.php  # User profile
+│   │   ├── update-profile.php       # Update profile
+│   │   ├── change-password.php      # Change password
+│   │   └── messages.php     # Messaging system
+│   │
+│   ├── config/              # Configuration files
+│   │   ├── database.php     # Database connection
+│   │   └── config.php       # General configuration
+│   │
+│   └── models/              # Data models
+│       ├── User.php         # User model
+│       ├── Flight.php       # Flight model
+│       └── Booking.php      # Booking model
+│
+└── database/                # Database files
+    └── flight_booking.sql   # Database schema and sample data
+```
+
+## Installation
 
 ### Prerequisites
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- Apache/Nginx web server
-- XAMPP/WAMP/LAMP (recommended for local development)
+- **Web Server**: Apache, Nginx, or similar
+- **PHP**: Version 7.4 or higher
+- **Database**: MySQL 5.7+ or MariaDB 10.3+
+- **Optional**: XAMPP, WAMP, or MAMP for local development
 
-### Step 1: Clone or Download
-Download the project to your local machine and place it in your web server directory:
-- **XAMPP**: `C:\xampp\htdocs\`
-- **WAMP**: `C:\wamp64\www\`
-- **LAMP**: `/var/www/html/`
+### Setup Instructions
 
-### Step 2: Database Setup
+1. **Clone or Download the Repository**
+   ```bash
+   git clone https://github.com/yourusername/Flight-Booking-Website.git
+   cd Flight-Booking-Website
+   ```
 
-1. Open phpMyAdmin (http://localhost/phpmyadmin)
-2. Create a new database named `flight_booking_system`
-3. Import the SQL file:
-   - Click on the database
-   - Go to "Import" tab
-   - Choose file: `database/flight_booking.sql`
-   - Click "Go" to import
+2. **Database Setup**
+   - Create a new database named `flight_booking_system`
+   - Import the database schema:
+     ```bash
+     mysql -u your_username -p flight_booking_system < database/flight_booking.sql
+     ```
+   - Or use phpMyAdmin to import `database/flight_booking.sql`
 
-4. Verify the database contains these tables:
-   - users
-   - flights
-   - bookings
-   - passengers
-   - payments
-   - airlines
-   - airports
-   - aircraft
-   - reviews
-   - notifications
-   - promotional_offers
-   - user_sessions
-   - contact_messages
+3. **Configure Database Connection**
+   - Open `backend/config/database.php`
+   - Update the database credentials:
+     ```php
+     private $host = "localhost";
+     private $db_name = "flight_booking_system";
+     private $username = "your_username";
+     private $password = "your_password";
+     ```
 
-### Step 3: Configure Backend
+4. **Update API Base URL**
+   - Open `frontend/js/api.js`
+   - Update the API base URL to match your setup:
+     ```javascript
+     const API_BASE_URL = 'http://localhost/Flight-Booking-Website/backend/api';
+     ```
 
-1. Open `backend/config/database.php`
-2. Update database credentials if needed:
-```php
-private $host = "localhost";
-private $db_name = "flight_booking_system";
-private $username = "root";
-private $password = "";  // Your MySQL password
-```
+5. **Start the Web Server**
+   - If using XAMPP/WAMP/MAMP, place the project in the `htdocs` directory
+   - Start Apache and MySQL services
+   - Access the application at `http://localhost/Flight-Booking-Website/frontend/`
 
-3. Open `backend/config/config.php`
-4. Update configuration as needed (JWT secret, SMTP settings, etc.)
+## Usage
 
-### Step 4: Configure Frontend
+### For Passengers
 
-1. Open `frontend/js/api.js`
-2. Update the API base URL if needed:
-```javascript
-const API_BASE_URL = 'http://localhost/Flight%20Booking%20Website/backend/api';
-```
+1. **Register an Account**
+   - Navigate to the registration page
+   - Fill in your details and select "Passenger" as account type
+   - Submit the form to create your account
 
-### Step 5: Start the Server
+2. **Login**
+   - Use your email and password to login
+   - You'll be redirected to the passenger dashboard
 
-#### Using XAMPP:
-1. Start Apache and MySQL from XAMPP Control Panel
-2. Access the website: `http://localhost/Flight%20Booking%20Website/frontend/index.html`
+3. **Search for Flights**
+   - Use the search form on the homepage or dashboard
+   - Select origin, destination, and travel dates
+   - Browse available flights
 
-#### Using PHP Built-in Server:
-```bash
-cd "Flight Booking Website/backend"
-php -S localhost:8000
-```
-Then access: `http://localhost:8000/../frontend/index.html`
+4. **Book a Flight**
+   - Select a flight from search results
+   - Confirm booking details
+   - Payment will be deducted from your account balance
 
-## 🔑 Default Admin Account
+5. **Manage Bookings**
+   - View all your bookings from the dashboard
+   - Cancel bookings if needed (refund applies)
 
-After importing the database, use these credentials to login:
-- **Email**: admin@skyvoyage.com
-- **Password**: admin123
+### For Airline Companies
 
-## 📚 API Documentation
+1. **Register a Company Account**
+   - Navigate to the registration page
+   - Fill in company details and select "Company" as account type
+   - Submit the form to create your account
+
+2. **Login**
+   - Use your company email and password to login
+   - You'll be redirected to the company dashboard
+
+3. **Add Flights**
+   - Navigate to "Add Flight" page
+   - Fill in flight details (route, schedule, pricing, capacity)
+   - Submit to add the flight to the system
+
+4. **Manage Flights**
+   - View all your company's flights
+   - Update flight details or cancel flights
+   - View booking statistics for each flight
+
+## Database Schema
+
+### Key Tables
+
+- **users**: Stores user accounts (both passengers and companies)
+- **flights**: Contains flight information
+- **bookings**: Manages flight reservations
+- **messages**: Handles communication between users and companies
+- **airports**: Airport information and codes
+
+## API Endpoints
 
 ### Authentication
-
-#### Register
-```
-POST /backend/api/auth.php?action=register
-Body: {
-  "first_name": "John",
-  "last_name": "Doe",
-  "email": "john@example.com",
-  "phone": "+1234567890",
-  "password": "password123"
-}
-```
-
-#### Login
-```
-POST /backend/api/auth.php?action=login
-Body: {
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
+- `POST /auth.php` - User login
+- `POST /register.php` - User registration
 
 ### Flights
-
-#### Search Flights
-```
-GET /backend/api/flights.php?action=search&origin_airport_id=1&destination_airport_id=2&departure_date=2024-01-15&class=economy&passengers=2
-```
-
-#### Get Flight by ID
-```
-GET /backend/api/flights.php?id=1
-```
+- `GET /flights.php` - Get all flights
+- `POST /search-flights.php` - Search flights
+- `POST /add-flight.php` - Add new flight (company only)
+- `GET /company-flights.php` - Get company flights
+- `POST /cancel-flight.php` - Cancel flight (company only)
 
 ### Bookings
+- `POST /bookings.php` - Create booking
+- `GET /passenger-bookings.php` - Get passenger bookings
+- `POST /cancel-booking.php` - Cancel booking
 
-#### Create Booking
-```
-POST /backend/api/bookings.php?action=create
-Headers: Authorization: Bearer {token}
-Body: {
-  "user_id": 1,
-  "flight_id": 1,
-  "passengers": [
-    {
-      "first_name": "John",
-      "last_name": "Doe",
-      "date_of_birth": "1990-01-01",
-      "passport_number": "AB123456",
-      "nationality": "US"
-    }
-  ],
-  "seat_class": "economy"
-}
-```
+### Profile & Settings
+- `GET /get-profile.php` - Get user profile
+- `POST /update-profile.php` - Update profile
+- `POST /change-password.php` - Change password
 
-#### Get User Bookings
-```
-GET /backend/api/bookings.php?user_id=1
-Headers: Authorization: Bearer {token}
-```
+## Security Features
 
-#### Cancel Booking
-```
-PUT /backend/api/bookings.php?action=cancel
-Headers: Authorization: Bearer {token}
-Body: {
-  "booking_id": 1
-}
-```
+- Password hashing using `PASSWORD_BCRYPT`
+- SQL injection prevention using PDO prepared statements
+- Input validation and sanitization
+- CORS headers for API security
+- Session management for authentication
 
-### Airports
-
-#### Get All Airports
-```
-GET /backend/api/airports.php
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: #1a73e8 (Blue)
-- **Secondary**: #34a853 (Green)
-- **Accent**: #fbbc04 (Yellow)
-- **Danger**: #ea4335 (Red)
-
-### Typography
-- **Primary Font**: Inter
-- **Display Font**: Playfair Display
-
-### Components
-- Buttons with hover effects and shadows
-- Cards with elevation and transitions
-- Forms with focus states
-- Responsive navigation
-- Modal dialogs
-- Loading states
-
-## 🔒 Security Features
-
-- **Password Hashing**: BCrypt with cost factor 10
-- **SQL Injection Prevention**: Prepared statements with PDO
-- **Session Management**: Secure token-based authentication
-- **CORS Protection**: Configured CORS headers
-- **Input Validation**: Server-side validation for all inputs
-- **XSS Prevention**: Sanitized outputs
-
-## 🧪 Testing
-
-### Sample Test Data
-
-The database includes sample data:
-- **8 Airlines**: American, British Airways, Emirates, etc.
-- **10 Airports**: JFK, LHR, DXB, LAX, etc.
-- **5 Aircraft Types**: Boeing 737, Airbus A320, etc.
-- **4 Users**: Including 1 admin account
-- **5 Sample Flights**: Various routes and times
-- **3 Promo Codes**: SUMMER2024, FIRSTFLIGHT, etc.
-
-### Test Workflow
-1. Register a new user account
-2. Login with credentials
-3. Search for flights (e.g., JFK to LHR)
-4. Select a flight
-5. Complete booking with passenger details
-6. View booking in dashboard
-7. (Optional) Cancel booking
-
-## 📱 Browser Support
+## Browser Compatibility
 
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+- Opera (latest)
 
-## 🚧 Future Enhancements
+## Contributing
 
-- [ ] Multi-city flight search
-- [ ] Seat selection interface
-- [ ] Real-time flight status updates
-- [ ] Mobile app (React Native)
-- [ ] Advanced analytics dashboard
-- [ ] Multi-currency support
-- [ ] Multi-language support
-- [ ] Social media integration
-- [ ] Loyalty program
-- [ ] Push notifications
+Contributions are welcome! Please follow these steps:
 
-## 📝 License
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a Pull Request
 
-This project is created for educational purposes.
+## License
 
-## 👥 Support
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-For issues or questions:
-1. Check the API documentation above
-2. Review the database schema in `database/flight_booking.sql`
-3. Check browser console for JavaScript errors
-4. Review PHP error logs
+## Support
 
-## 🎯 Development Tips
+For support, please email: support@flightbooking.com
 
-### Adding New Flights
-Use phpMyAdmin or the admin panel to add flights. Ensure:
-- Valid airline_id and aircraft_id references
-- origin_airport_id and destination_airport_id exist
-- departure_time is before arrival_time
-- available_seats <= total_capacity
+## Acknowledgments
 
-### Testing Bookings
-1. Make sure flights have available seats
-2. Use valid user_id (must be logged in)
-3. Passenger count must match flight capacity
-4. Test with promotional codes for discounts
-
-### Debugging API
-1. Enable error reporting in PHP:
-```php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-```
-2. Check browser Network tab for API responses
-3. Use Postman for API testing
-
-## 🌟 Credits
-
-- Icons: Font Awesome
-- Fonts: Google Fonts (Inter, Playfair Display)
-- Images: Unsplash (placeholder backgrounds)
+- Font Awesome for icons
+- Google Fonts for typography
+- The PHP and MySQL communities
 
 ---
 
-**Built with ❤️ for premium flight booking experiences**
+**Note**: This is a demonstration project for educational purposes. For production use, additional security measures and optimizations should be implemented.

@@ -206,24 +206,9 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-plane-departure"></i>
-                <span>SkyVoyage</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#" class="active">Flights</a></li>
-                <li><a href="#">My Bookings</a></li>
-                <li><a href="#">Deals</a></li>
-            </ul>
-            <div class="nav-actions">
-                <a href="login.html" class="btn btn-text btn-login">Login</a>
-                <a href="register.html" class="btn btn-primary btn-signup">Sign Up</a>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/passenger-navbar.html');</script>
     
     <div class="results-page">
         <div class="results-header">

@@ -21,6 +21,11 @@
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* Override fixed navbar for this page */
+        .navbar {
+            position: relative;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
@@ -30,7 +35,7 @@
 
         .container {
             max-width: 1200px;
-            margin: 100px auto 50px;
+            margin: 20px auto 50px;
             padding: 0 20px;
         }
 
@@ -398,23 +403,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-nav">
-            <div class="nav-brand">
-                <i class="fas fa-plane"></i>
-                <span>Flight Booking</span>
-            </div>
-            <div class="nav-links">
-                <a href="passenger-home.html">Dashboard</a>
-                <a href="search-flights.html">Search Flights</a>
-                <a href="messages.html">Messages</a>
-                <a href="passenger-profile.html" class="active">Profile</a>
-                <button onclick="logout()" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/passenger-navbar.html');</script>
 
     <div class="container">
         <div id="alertBox" class="alert"></div>
@@ -451,6 +442,16 @@
                 <h2><i class="fas fa-user-circle"></i> About</h2>
                 <div class="info-item">
                     <div class="value" id="passengerBio">No bio added yet</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2><i class="fas fa-passport"></i> Passport</h2>
+                <div class="passport-container" id="passportDisplay">
+                    <div class="passport-placeholder">
+                        <i class="fas fa-id-card" style="font-size: 48px; color: #ccc;"></i>
+                        <p style="color: #999; margin-top: 10px;">No passport uploaded</p>
+                    </div>
                 </div>
             </div>
 
@@ -498,6 +499,20 @@
                     </div>
                     <div id="photoPreview" class="photo-preview" style="display: none;">
                         <img id="photoPreviewImg" src="" alt="Photo Preview">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPassport">Passport Image</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="editPassport" accept="image/*" onchange="previewPassport(event)">
+                        <label for="editPassport" class="file-input-label">
+                            <i class="fas fa-passport"></i>
+                            <span>Click to upload passport (optional)</span>
+                        </label>
+                    </div>
+                    <div id="passportPreview" class="photo-preview" style="display: none;">
+                        <img id="passportPreviewImg" src="" alt="Passport Preview">
                     </div>
                 </div>
 
@@ -579,7 +594,29 @@
             
             // Display photo if exists
             if (user.photo) {
-                document.getElementById('photoDisplay').innerHTML = `<img src="${user.photo}" alt="Profile Photo">`;
+                const photoUrl = user.photo.startsWith('http') ? user.photo : `http://localhost/Flight-Booking-Website/${user.photo}`;
+                const img = new Image();
+                img.onload = function() {
+                    document.getElementById('photoDisplay').innerHTML = `<img src="${photoUrl}" alt="Profile Photo">`;
+                };
+                img.onerror = function() {
+                    // If image fails to load, keep the default icon
+                    console.log('Photo not found, using default avatar');
+                };
+                img.src = photoUrl;
+            }
+            
+            // Display passport if exists
+            if (user.passport_img) {
+                const passportUrl = user.passport_img.startsWith('http') ? user.passport_img : `http://localhost/Flight-Booking-Website/${user.passport_img}`;
+                const img = new Image();
+                img.onload = function() {
+                    document.getElementById('passportDisplay').innerHTML = `<img src="${passportUrl}" alt="Passport Image">`;
+                };
+                img.onerror = function() {
+                    console.log('Passport not found');
+                };
+                img.src = passportUrl;
             }
             
             // Display phone
@@ -683,6 +720,18 @@
                 reader.readAsDataURL(file);
             }
         }
+        
+        function previewPassport(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('passportPreviewImg').src = e.target.result;
+                    document.getElementById('passportPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
         document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -697,6 +746,11 @@
             const photoFile = document.getElementById('editPhoto').files[0];
             if (photoFile) {
                 formData.append('photo', photoFile);
+            }
+            
+            const passportFile = document.getElementById('editPassport').files[0];
+            if (passportFile) {
+                formData.append('passport', passportFile);
             }
 
             try {

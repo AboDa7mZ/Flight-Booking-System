@@ -185,25 +185,9 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="passenger-home.html" class="logo">
-                <i class="fas fa-plane-departure"></i>
-                <span>SkyVoyage</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="passenger-home.html">Home</a></li>
-                <li><a href="search-flights.html" class="active">Search Flights</a></li>
-                <li><a href="passenger-profile.html">Profile</a></li>
-            </ul>
-            <div class="nav-actions">
-                <span style="margin-right: var(--spacing-md); color: var(--color-gray-700);">
-                    <i class="fas fa-wallet"></i> $<span id="balanceDisplay">0.00</span>
-                </span>
-                <button class="btn btn-text" onclick="logout()">Logout</button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+    <script>loadNavbar('components/passenger-navbar.html');</script>
     
     <div class="search-page">
         <div class="search-hero">

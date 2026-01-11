@@ -4,8 +4,19 @@
  * Updates user profile information
  */
 
+// Start output buffering to catch any accidental output
+ob_start();
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 require_once '../config/database.php';
 
@@ -80,6 +91,29 @@ try {
         }
     }
     
+    // Handle passport upload for passengers
+    $passportPath = null;
+    if (isset($_FILES['passport']) && $_FILES['passport']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../../uploads/passports/';
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        
+        $fileExtension = pathinfo($_FILES['passport']['name'], PATHINFO_EXTENSION);
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+        
+        if (in_array(strtolower($fileExtension), $allowedExtensions)) {
+            $fileName = 'passport_' . $user_id . '_' . time() . '.' . $fileExtension;
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['passport']['tmp_name'], $targetPath)) {
+                $passportPath = 'uploads/passports/' . $fileName;
+            }
+        }
+    }
+    
     // Build update query dynamically based on provided fields
     $updateFields = ['name = :name'];
     $params = [':name' => $name, ':user_id' => $user_id];
@@ -104,6 +138,11 @@ try {
         $params[':photo'] = $photoPath;
     }
     
+    if ($passportPath) {
+        $updateFields[] = 'passport_img = :passport_img';
+        $params[':passport_img'] = $passportPath;
+    }
+    
     if ($logoPath) {
         $updateFields[] = 'logo_img = :logo_img';
         $params[':logo_img'] = $logoPath;
@@ -118,12 +157,14 @@ try {
     }
     
     if ($stmt->execute()) {
+        ob_end_clean(); // Clear any buffered output
         echo json_encode([
             'success' => true,
             'message' => 'Profile updated successfully',
             'logo' => $logoPath
         ]);
     } else {
+        ob_end_clean(); // Clear any buffered output
         http_response_code(500);
         echo json_encode([
             'success' => false,
@@ -132,10 +173,18 @@ try {
     }
     
 } catch (PDOException $e) {
+    ob_end_clean(); // Clear any buffered output
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Database error: ' . $e->getMessage()
+    ]);
+} catch (Exception $e) {
+    ob_end_clean(); // Clear any buffered output
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
     ]);
 }
 ?>

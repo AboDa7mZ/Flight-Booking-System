@@ -9,7 +9,7 @@ class Database {
     private $host = "localhost";
     private $db_name = "flight_booking_system";
     private $username = "root";
-    private $password = "0507927089Az";
+    private $password = "";
     private $charset = "utf8mb4";
     
     public $conn;
